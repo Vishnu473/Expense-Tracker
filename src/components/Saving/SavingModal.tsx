@@ -1,0 +1,202 @@
+import { useForm } from 'react-hook-form';
+import { FiX } from 'react-icons/fi';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
+import type { Saving } from '../../interfaces/saving';
+import { useState } from 'react';
+import axiosInstance from '../../services/axiosInstance';
+
+interface SavingModalProps {
+  saving: Saving;
+  onClose: () => void;
+}
+
+const SavingModal = ({ saving, onClose }: SavingModalProps) => {
+  const queryClient = useQueryClient();
+  const [imageUploaded, setImageUploaded] = useState<Boolean>(false);
+  const [newPreviewImageUrl, setNewPreviewImageUrl] = useState<string>('');
+  const [newImageUrl, setNewImageUrl] = useState<string>('');
+
+  const { register, handleSubmit } = useForm({
+    defaultValues: {
+      purpose: saving.purpose,
+      addAmount: 0
+    },
+  });
+
+  const { mutate: updateGoal, isPending } = useMutation({
+    mutationFn: async (data: { purpose: string; pic: string, addAmount: number }) => {
+      const updated = { ...saving, purpose: data.purpose, pic: data.pic, current_amount: saving.current_amount + data.addAmount };
+      const res = await axiosInstance.put(`/saving/${saving._id}`, updated);
+      return res.data;
+    },
+    onSuccess: () => {
+      toast.success('Goal updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['savings'] });
+      onClose();
+    },
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || 'Failed to update goal');
+    },
+  });
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      setNewPreviewImageUrl(URL.createObjectURL(file));
+      const formData = new FormData();
+      formData.append("file", file); // Use 'image' as expected by backend
+
+      console.log([...formData]);
+
+      await callImageUploadApi(formData);
+    }
+  };
+
+  const callImageUploadApi = async (formData: FormData) => {
+    try {
+      const response = await axiosInstance.post('/saving/single/image', formData, {
+        withCredentials: true,
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      console.log(response?.data);
+
+      if (response.status === 200) {
+        console.log("Image uploaded successfully to Cloud.....");
+        setNewImageUrl(response?.data?.url ?? 'https://dummyimage.com/600x400/000/fff&text=Uploaded+Image');
+        setImageUploaded(true);
+        return newImageUrl;
+      }
+    } catch (error) {
+      setImageUploaded(false);
+      console.log("Failed to update the image");
+      return saving?.pic;
+    }
+  };
+
+  const onSubmit = async (data: { purpose: string; addAmount: number }) => {
+    const imageUrl = imageUploaded ? newImageUrl : saving.pic ?? '';
+    updateGoal({ purpose: data.purpose, pic: imageUrl, addAmount: Number(data.addAmount) });
+  };
+
+  // const onSubmit = async (data: { purpose: string, addAmount: number }) => {
+  //   const parsedAmount = Number(data.addAmount);
+
+  //   if (isNaN(parsedAmount)) {
+  //     toast.error("Please enter a valid number for amount");
+  //     return;
+  //   }
+
+  //   if (imageUploaded) {
+  //     updateGoal({
+  //       purpose: data.purpose,
+  //       pic: newImageUrl,
+  //       addAmount: parsedAmount,
+  //     });
+  //   }
+  // };
+
+  const handleWrapperClick = (e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).id === 'modal-wrapper') onClose();
+  };
+
+  return (
+    <div
+      id="modal-wrapper"
+      className="flex justify-center items-center fixed inset-0 bg-black bg-opacity-80 z-50 p-4"
+      onClick={handleWrapperClick}
+    >
+      <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-xl overflow-auto">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-white text-xl">Edit Goal</h2>
+          <button onClick={onClose} className="text-white text-2xl">
+            <FiX />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <div className='flex flex-row gap-3'>
+            <div className='flex flex-col space-y-2 flex-1'>
+              <p className='dark:text-gray-300 text-gray-800 text-sm'>old image:</p>
+              <img className='h-40 rounded object-cover'
+                src={saving?.pic ?? 'https://www.rd.com/wp-content/uploads/2020/04/hanauma-bay-on-the-island-of-o-ahu-in-the-united-states-of-america-e1643060191903.jpg'} alt={saving?.purpose} />
+
+            </div>
+            <div className="flex flex-col justify-center space-y-2 flex-1">
+              <p className='dark:text-gray-300 text-gray-800 text-sm'>new image:</p>
+
+              <label
+                htmlFor="image-upload"
+                className="cursor-pointer flex justify-center items-center border-2 border-dotted border-gray-400 h-40 min-w-full rounded-md overflow-hidden hover:border-blue-400 transition"
+              >
+                {newPreviewImageUrl ? (
+                  <img
+                    src={newPreviewImageUrl}
+                    alt="Goal"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span className="text-gray-300 text-sm">Click to upload image</span>
+                )}
+                <input
+                  id="image-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
+
+            </div>
+          </div>
+          <div>
+            <label className="block text-white mb-1">Purpose:</label>
+            <input
+              type="text"
+              {...register('purpose')}
+              className="bg-gray-700 text-white p-2 rounded w-full"
+              placeholder="Enter new purpose"
+            />
+          </div>
+          <div>
+            <label className="block text-white mb-1">Enter amount:</label>
+            <input
+              type="number"
+              {...register('addAmount', { valueAsNumber: true })}
+              className="bg-gray-700 text-white p-2 rounded w-full"
+              placeholder="Enter amount"
+            />
+          </div>
+          <input
+            type="submit"
+            value={isPending ? 'Updating...' : 'Update Goal'}
+            disabled={Boolean(isPending || (newPreviewImageUrl && !imageUploaded))}
+            className={`px-4 py-2 rounded cursor-pointer transition w-full
+    ${isPending || (newPreviewImageUrl && !imageUploaded)
+                ? 'bg-gray-500 cursor-not-allowed'
+                : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
+          />
+
+          {newPreviewImageUrl && !imageUploaded && (
+            <p className="mt-2 text-sm text-white bg-green-600 rounded-sm text-center px-2 py-1">
+              Image is uploading...
+            </p>
+          )}
+
+          {/* {
+  newPreviewImageUrl ? imageUploaded ? <input
+            type="submit"
+            value={isPending ? 'Updating...' : 'Update Goal'}
+            disabled={isPending}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded cursor-pointer"
+          /> : <p className='mt-2 dark:text-gray-200 text-sm dark:bg-green-800 bg-green-400 rounded-sm text-center inline px-2 py-1'>image is uploading...</p> : null
+} */}
+
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default SavingModal;
