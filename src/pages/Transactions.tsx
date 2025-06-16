@@ -9,7 +9,7 @@ import CreateTransactionModal from "../components/Transactions/CreateTransaction
 import TransactionFilters from '../components/Transactions/TransactionFilters';
 
 const Transactions: React.FC = () => {
-  const [isModal, setIsModal] = useState<Boolean>(false);
+  const [isModal, setIsModal] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState(false);
   const { theme } = useTheme();
 
@@ -44,14 +44,7 @@ const Transactions: React.FC = () => {
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-2">Error Loading Transactions</h2>
           <p className="text-gray-500">Please try again later</p>
-          <button className="bg-blue-600 hover:bg-blue-700 dark:bg-gray-600 dark:hover:bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors w-fit"
-            onClick={() => {
-              setIsModal(true)
-            }}>
-            <span>New Transaction</span>
-          </button>
         </div>
-        <CreateTransactionModal onClose={() => setIsModal(false)} isModal={isModal} />
       </div>
     );
   }
@@ -63,7 +56,10 @@ const Transactions: React.FC = () => {
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
           <h1 className="text-3xl font-bold mb-4 sm:mb-0">Transactions</h1>
-          <button className="bg-blue-600 hover:bg-blue-700 dark:bg-gray-600 dark:hover:bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors w-fit">
+          <button className="bg-blue-600 hover:bg-blue-700 dark:bg-gray-600 dark:hover:bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors w-fit"
+            onClick={() => {
+              setIsModal(true)
+            }}>
             <span>New Transaction</span>
           </button>
         </div>
@@ -106,7 +102,8 @@ const Transactions: React.FC = () => {
         )}
       </main>
 
-
+      <CreateTransactionModal onClose={() => setIsModal(false)} isModal={isModal} />
+      
     </div>
   );
 };

@@ -3,9 +3,9 @@ import { z } from "zod";
 export const transactionSchema = z.object({
   amount: z
     .number({ required_error: 'Amount is required' })
-    .positive('Please enter a valid positive amount').default(0),
+    .positive('Please enter a valid positive amount'),
 
-  source: z.enum(['Cash', 'Bank Account', 'others'], {
+  source: z.enum(['Cash', 'Bank Account', 'Other'], {
     required_error: 'Please select a source for the transaction',
   }),
 
@@ -34,11 +34,11 @@ export const transactionSchema = z.object({
       message: 'Transaction date cannot be in the future',
     }),
 
-  status: z.enum(['Pending', 'Success', 'Failed']).default('Pending'),
+  status: z.enum(['Pending', 'Success', 'Failed']),
 })
   .refine(
     (data) => {
-      if (data.source === 'others') {
+      if (data.source === 'Other') {
         return !!data.source_detail?.trim();
       }
       return true;

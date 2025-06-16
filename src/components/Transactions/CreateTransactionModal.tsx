@@ -1,9 +1,15 @@
-import { useState } from "react";
 import { useForm } from 'react-hook-form';
 import { FiX } from 'react-icons/fi';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { transactionSchema } from "../../schemas/transactionSchema";
 import type { TransactionSchema } from "../../schemas/transactionSchema";
+import { useMutation } from '@tanstack/react-query';
+import type { TransactionType } from '../../interfaces/transaction';
+import { useEffect, useRef } from 'react';
+import { createTransactionApi } from '../../services/api/transactionApi';
+import { toast } from 'react-toastify';
+import { useQueryClient } from '@tanstack/react-query';
+
 
 interface createTransactionModalProps {
     onClose: () => void;
@@ -17,13 +23,13 @@ interface categoryProps {
 }
 
 export const categories: categoryProps[] = [
-    { category_id: 'cat001', category_name: 'Salary', category_type: 'income' },
+    { category_id: '684c70ff0a8249c4fa8cff62', category_name: 'Salary', category_type: 'income' },
     { category_id: 'cat002', category_name: 'Freelance', category_type: 'income' },
     { category_id: 'cat003', category_name: 'Investments', category_type: 'income' },
     { category_id: 'cat004', category_name: 'Gift', category_type: 'income' },
     { category_id: 'cat005', category_name: 'Other Income', category_type: 'income' },
 
-    { category_id: 'cat006', category_name: 'Food & Dining', category_type: 'expense' },
+    { category_id: '6850501f749494f51d2ea194', category_name: 'Food', category_type: 'expense' },
     { category_id: 'cat007', category_name: 'Groceries', category_type: 'expense' },
     { category_id: 'cat008', category_name: 'Rent', category_type: 'expense' },
     { category_id: 'cat009', category_name: 'Utilities', category_type: 'expense' },
@@ -32,7 +38,7 @@ export const categories: categoryProps[] = [
     { category_id: 'cat012', category_name: 'Healthcare', category_type: 'expense' },
     { category_id: 'cat013', category_name: 'Insurance', category_type: 'expense' },
     { category_id: 'cat014', category_name: 'Entertainment', category_type: 'expense' },
-    { category_id: 'cat015', category_name: 'Shopping', category_type: 'expense' },
+    { category_id: '68505040749494f51d2ea197', category_name: 'Shopping', category_type: 'expense' },
     { category_id: 'cat016', category_name: 'Subscriptions', category_type: 'expense' },
     { category_id: 'cat017', category_name: 'Education', category_type: 'expense' },
     { category_id: 'cat018', category_name: 'Donations', category_type: 'expense' },
@@ -40,11 +46,23 @@ export const categories: categoryProps[] = [
     { category_id: 'cat020', category_name: 'Miscellaneous', category_type: 'expense' },
 ];
 
-export const paymentApps = ['GPay', 'PhonePe', 'Paytm', 'AmazonPay', 'RazorPay'];
-export const sources = ['Cash', 'Bank Account', 'others'];
+export const paymentApps = ['GPay', 'PhonePe', 'Paytm', 'AmazonPay', 'RazorPay', 'Other'];
+export const sources = ['Cash', 'Bank Account', 'Other'];
 export const status = ['Pending', 'Success', 'Failed'];
+export const bankAccounts = ['ICICI'];
 
 const CreateTransactionModal = ({ onClose, isModal }: createTransactionModalProps) => {
+
+    const payment_sources = bankAccounts.length !== 0 ? sources : sources.filter((source) => source !== 'Bank Account');
+
+    const queryClient = useQueryClient();
+
+    useEffect(() => {
+        return () => {
+            controllerRef.current?.abort(); // Cancel if modal unmounts
+        };
+    }, []);
+
     const {
         register,
         handleSubmit,
@@ -58,27 +76,60 @@ const CreateTransactionModal = ({ onClose, isModal }: createTransactionModalProp
             source: 'Cash',
             description: '',
             category_id: '',
-            category_type: 'expense',
-            category_name: '',
             status: 'Pending',
             transaction_date: '',
-            source_detail: '',
+            source_detail: undefined,
             payment_app: 'Other',
         }
     });
-
-    const onsubmit = async (data: TransactionSchema) => {
-        console.log(data);
-        console.log(selectedCategory);
-        reset();
-        onClose();
-    }
 
     const selectedSource = watch('source');
     const selectedCategoryId = watch('category_id');
     const selectedCategory = categories.find(cat => cat.category_id === selectedCategoryId);
 
-    if (!isModal) return null;
+    const controllerRef = useRef<AbortController | null>(null);
+
+    const mutation = useMutation({
+        mutationFn: async (data: TransactionType) => {
+            //cancel previous mutation if running
+            controllerRef.current?.abort();
+
+            const controller = new AbortController();
+            controllerRef.current = controller;
+
+            return await createTransactionApi(data, controller?.signal);
+        },
+        onSuccess: () => {
+            toast.success("Transaction added!");
+            queryClient.invalidateQueries({ queryKey: ['transactions'] }); //Refetch the transactions
+            reset();
+            onClose();
+        },
+        onError: (err) => {
+            toast.error("Failed to create transaction. Please try again.");
+            console.error(err);
+        },
+    });
+
+    const onSubmit = async (data: TransactionSchema) => {
+        const transaction: TransactionType = {
+            amount: data.amount,
+            transaction_date: data.transaction_date,
+            status: data.status,
+            source: data.source,
+            source_detail: data.source_detail ?? '',
+            payment_app: data.payment_app,
+            description: data.description,
+            category_id: selectedCategory?.category_id ?? '',
+            category_name: selectedCategory?.category_name ?? '',
+            category_type: selectedCategory?.category_type ?? 'expense'
+        }
+        try {
+            await mutation.mutateAsync(transaction);
+        } catch (error) {
+            console.error("Transaction mutation failed or was cancelled", error);
+        }
+    }
 
     const handleModalClose = () => {
         reset();
@@ -89,21 +140,24 @@ const CreateTransactionModal = ({ onClose, isModal }: createTransactionModalProp
         if ((e.target as HTMLElement).id === 'modal-wrapper') handleModalClose();
     };
 
+    if (!isModal) return null;
+
     return (
         <div
             id="modal-wrapper"
             className="flex justify-center items-center fixed inset-0 bg-black bg-opacity-80 z-50 p-4"
             onClick={handleWrapperClick}
         >
-            <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-xl overflow-auto">
+            <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-xl overflow-y-auto max-h-[90vh]"
+                onClick={(e) => e.stopPropagation()}>
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-black dark:text-white text-xl font-medium">Create Transaction</h2>
-                    <button onClick={handleModalClose} className="text-white text-2xl">
+                    <button onClick={handleModalClose} className="text-black dark:text-white text-2xl">
                         <FiX />
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit(onsubmit)} className="space-y-5">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                     <div>
                         <label className="text-black dark:text-white block mb-1">Transaction Amount:</label>
                         <input
@@ -186,8 +240,8 @@ const CreateTransactionModal = ({ onClose, isModal }: createTransactionModalProp
                             className={`bg-gray-300 dark:bg-gray-700 text-black dark:text-white p-2 rounded w-full focus:outline-none focus:ring-2 ${errors.source ? 'border border-red-500 focus:ring-red-500' : 'focus:ring-blue-500'
                                 }`}
                         >
-                            <option value="">Select source</option>
-                            {sources.map((src) => (
+                            <option value="">Select source <span>*(Add Banks in user section to select here)</span></option>
+                            {payment_sources.map((src) => (
                                 <option key={src} value={src}>
                                     {src}
                                 </option>
@@ -197,40 +251,46 @@ const CreateTransactionModal = ({ onClose, isModal }: createTransactionModalProp
                     </div>
 
                     {selectedSource === 'Bank Account' && (
-                        <div>
-                            <label className="block text-black dark:text-white mb-1">Payment App (optional):</label>
-                            <select
-                                {...register('payment_app')}
-                                className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white p-2 rounded w-full"
-                            >
-                                <option value="">Select app</option>
-                                {paymentApps.map((app) => (
-                                    <option key={app} value={app}>
-                                        {app}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    )}
-
-                    {selectedSource === 'others' && (
-                        <div>
-                            <label className="block text-black dark:text-white mb-1">Other Source Details (optional):</label>
-                            <input
-                                type="text"
-                                {...register('source_detail')}
-                                className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white p-2 rounded w-full"
-                                placeholder="Enter source details"
-                            />
-                        </div>
+                        <>
+                            <div>
+                                <label className="block text-black dark:text-white mb-1">Other Source Details:</label>
+                                <select
+                                    {...register('source_detail')}
+                                    className={`bg-gray-300 dark:bg-gray-700 text-black dark:text-white p-2 rounded w-full focus:outline-none focus:ring-2 ${errors.source ? 'border border-red-500 focus:ring-red-500' : 'focus:ring-blue-500'
+                                        }`}
+                                >
+                                    <option value="">Select Bank</option>
+                                    {bankAccounts.map((bnk) => (
+                                        <option key={bnk} value={bnk}>
+                                            {bnk}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-black dark:text-white mb-1">Payment App (optional):</label>
+                                <select
+                                    {...register('payment_app')}
+                                    className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white p-2 rounded w-full"
+                                >
+                                    <option value="">Select app</option>
+                                    {paymentApps.map((app) => (
+                                        <option key={app} value={app}>
+                                            {app}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </>
                     )}
 
                     <div className="pt-4 flex justify-end">
                         <button
                             type="submit"
-                            className="bg-blue-600 hover:bg-blue-700 px-4 py-2 text-white rounded-lg"
+                            disabled={mutation.isPending}
+                            className={`bg-blue-600 hover:bg-blue-700 px-4 py-2 text-white rounded-lg ${mutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
-                            Add Transaction
+                            {mutation.isPending ? 'Adding...' : 'Add Transaction'}
                         </button>
                     </div>
                 </form>

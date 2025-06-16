@@ -1,13 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import axiosInstance from '../services/axiosInstance';
+import { fetchWalletSummary } from '../services/api/walletApi';
 
 export const useWallet = () => {
   return useQuery({
     queryKey: ['wallet'],
-    queryFn: async () => {
-      const res = await axiosInstance.get('/wallet/me');
-      return res.data;
-    },
-    staleTime: 1000 * 60 * 5, // 5 mins
+    queryFn: fetchWalletSummary,
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false
   });
 };

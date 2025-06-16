@@ -99,7 +99,7 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
       <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-xl overflow-auto">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-white text-xl">Edit Goal</h2>
-          <button onClick={onClose} className="text-white text-2xl">
+          <button onClick={onClose} className="text-black dark:text-white text-2xl">
             <FiX />
           </button>
         </div>
