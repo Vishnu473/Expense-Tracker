@@ -17,7 +17,7 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
   const [newPreviewImageUrl, setNewPreviewImageUrl] = useState<string>('');
   const [newImageUrl, setNewImageUrl] = useState<string>('');
 
-  const { register, handleSubmit } = useForm({
+  const { register, handleSubmit,reset } = useForm({
     defaultValues: {
       purpose: saving.purpose,
       addAmount: 0
@@ -78,27 +78,16 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
   const onSubmit = async (data: { purpose: string; addAmount: number }) => {
     const imageUrl = imageUploaded ? newImageUrl : saving.pic ?? '';
     updateGoal({ purpose: data.purpose, pic: imageUrl, addAmount: Number(data.addAmount) });
+    handleModalClose();
   };
 
-  // const onSubmit = async (data: { purpose: string, addAmount: number }) => {
-  //   const parsedAmount = Number(data.addAmount);
-
-  //   if (isNaN(parsedAmount)) {
-  //     toast.error("Please enter a valid number for amount");
-  //     return;
-  //   }
-
-  //   if (imageUploaded) {
-  //     updateGoal({
-  //       purpose: data.purpose,
-  //       pic: newImageUrl,
-  //       addAmount: parsedAmount,
-  //     });
-  //   }
-  // };
+  const handleModalClose = () => {
+    reset();
+    onClose();
+  }
 
   const handleWrapperClick = (e: React.MouseEvent) => {
-    if ((e.target as HTMLElement).id === 'modal-wrapper') onClose();
+    if ((e.target as HTMLElement).id === 'modal-wrapper') handleModalClose();
   };
 
   return (
@@ -183,15 +172,6 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
               Image is uploading...
             </p>
           )}
-
-          {/* {
-  newPreviewImageUrl ? imageUploaded ? <input
-            type="submit"
-            value={isPending ? 'Updating...' : 'Update Goal'}
-            disabled={isPending}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded cursor-pointer"
-          /> : <p className='mt-2 dark:text-gray-200 text-sm dark:bg-green-800 bg-green-400 rounded-sm text-center inline px-2 py-1'>image is uploading...</p> : null
-} */}
 
         </form>
       </div>
