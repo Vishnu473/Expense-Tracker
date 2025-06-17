@@ -20,13 +20,14 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
   const { register, handleSubmit,reset } = useForm({
     defaultValues: {
       purpose: saving.purpose,
-      addAmount: 0
+      addAmount: 0,
+      transaction_date:''
     },
   });
 
   const { mutate: updateGoal, isPending } = useMutation({
-    mutationFn: async (data: { purpose: string; pic: string, addAmount: number }) => {
-      const updated = { ...saving, purpose: data.purpose, pic: data.pic, current_amount: saving.current_amount + data.addAmount };
+    mutationFn: async (data: { purpose: string; pic: string, addAmount: number, transaction_date : string }) => {
+      const updated = { ...saving, purpose: data.purpose, pic: data.pic, current_amount: saving.current_amount + data.addAmount, transaction_date: data.transaction_date };
       const res = await axiosInstance.put(`/saving/${saving._id}`, updated);
       return res.data;
     },
@@ -75,9 +76,9 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
     }
   };
 
-  const onSubmit = async (data: { purpose: string; addAmount: number }) => {
+  const onSubmit = async (data: { purpose: string; addAmount: number; transaction_date:string }) => {
     const imageUrl = imageUploaded ? newImageUrl : saving.pic ?? '';
-    updateGoal({ purpose: data.purpose, pic: imageUrl, addAmount: Number(data.addAmount) });
+    updateGoal({ purpose: data.purpose, pic: imageUrl, addAmount: Number(data.addAmount), transaction_date:data.transaction_date });
     handleModalClose();
   };
 
@@ -155,6 +156,15 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
               {...register('addAmount', { valueAsNumber: true })}
               className="bg-gray-700 text-white p-2 rounded w-full"
               placeholder="Enter amount"
+            />
+          </div>
+          <div>
+            <label className="block text-white mb-1">Transaction Date:</label>
+            <input
+              type="date"
+              {...register('transaction_date')}
+              className="bg-gray-700 text-white p-2 rounded w-full"
+              placeholder="Enter transaction date"
             />
           </div>
           <input

@@ -89,6 +89,7 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
                 <option value="">All Types</option>
                 <option value="income">Income</option>
                 <option value="expense">Expense</option>
+                <option value="saving">Saving</option>
               </select>
             </div>
 

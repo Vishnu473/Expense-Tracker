@@ -3,9 +3,11 @@ import { format } from 'date-fns';
 import { useGetSavings } from '../hooks/useSavings';
 import type { Saving } from '../interfaces/saving';
 import SavingModal from '../components/Saving/SavingModal';
+import CreateSavingModal from '../components/Saving/CreateSavingModal';
 
 const Savings = () => {
   const { data: savings, isLoading } = useGetSavings();
+  const [isCreateModal, setIsCreateModal] = useState<boolean>(false);
   const [selectedSaving, setSelectedSaving] = useState<Saving | null>(null);
 
   if (isLoading) return <p className="text-center">Loading...</p>;
@@ -16,7 +18,7 @@ const Savings = () => {
         <h2 className="text-2xl font-bold dark:text-white">Savings Goals</h2>
         <button
           className="inline-flex items-center gap-2 px-3 py-1.5 border dark:border-gray-400 rounded-md text-sm dark:text-white bg-zinc-100 dark:bg-gray-600 dark:hover:bg-gray-700 hover:bg-zinc-200"
-          onClick={() => { }}
+          onClick={() => { setIsCreateModal(true)}}
         >Add Goal
         </button>
       </div>
@@ -82,6 +84,8 @@ const Savings = () => {
           onClose={() => setSelectedSaving(null)}
         />
       )}
+
+      <CreateSavingModal isCreateModal={isCreateModal} closeModal={() => setIsCreateModal(false)}/>
     </div>
   );
 };

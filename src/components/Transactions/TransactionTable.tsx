@@ -7,7 +7,7 @@ export interface Transaction {
   category_name: string;
   description: string;
   amount: number;
-  category_type: 'income' | 'expense';
+  category_type: 'income' | 'expense' | 'saving';
   status: 'Pending' | 'Success' | 'Failed';
 }
 
@@ -32,16 +32,16 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     });
   };
 
-  const formatAmount = (amount: number, type: 'income' | 'expense') => {
+  const formatAmount = (amount: number, type: 'income' | 'expense' | 'saving') => {
     const formatted = new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'INR'
     }).format(amount);
     
-    if (type === 'expense') {
-      return `-${formatted}`;
+    if (type === 'income') {
+      return `+${formatted}`;
     }
-    return `+${formatted}`;
+    return `-${formatted}`;
   };
 
   const getStatusColor = (status: string) => {
@@ -57,10 +57,15 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     }
   };
 
-  const getTypeColor = (type: 'income' | 'expense') => {
-    return type === 'income' 
-      ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-      : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+  const getTypeColor = (type: 'income' | 'expense' | 'saving') => {
+    switch (type) {
+      case 'income':
+        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+      case 'saving':
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+      case 'expense':
+        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+    }
   };
 
   return (
@@ -105,13 +110,13 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
                       {transaction.description}
                     </td>
                     <td className={`px-6 py-4 text-sm font-medium ${
-                      transaction.category_type === 'income' ? 'text-green-600' : 'text-red-600'
+                      transaction.category_type === 'income' ? 'text-green-600' : transaction.category_type === 'saving' ? 'text-blue-500' : 'text-red-600'
                     }`}>
                       {formatAmount(transaction.amount, transaction.category_type)}
                     </td>
                     <td className="px-6 py-4 text-sm">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(transaction.category_type)}`}>
-                        {transaction.category_type === 'income' ? 'Income' : 'Expense'}
+                        {transaction.category_type === 'income' ? 'Income' : (transaction.category_type === 'saving' ? 'Saving' : 'Expense')}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm">
@@ -136,7 +141,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
                   </div>
                   <div className="text-right">
                     <p className={`font-medium ${
-                      transaction.category_type === 'income' ? 'text-green-600' : 'text-red-600'
+                      transaction.category_type === 'income' ? 'text-green-600' : transaction.category_type === 'saving' ? 'text-blue-500' : 'text-red-600'
                     }`}>
                       {formatAmount(transaction.amount, transaction.category_type)}
                     </p>
@@ -147,7 +152,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
                 </div>
                 <div className="flex justify-between items-center">
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(transaction.category_type)}`}>
-                    {transaction.category_type === 'income' ? 'Income' : 'Expense'}
+                    {transaction.category_type === 'income' ? 'Income' : (transaction.category_type === 'saving' ? 'Saving' : 'Expense')}
                   </span>
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(transaction.status)}`}>
                     {transaction.status}

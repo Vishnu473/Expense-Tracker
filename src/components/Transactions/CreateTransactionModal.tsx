@@ -19,7 +19,7 @@ interface createTransactionModalProps {
 interface categoryProps {
     category_id: string;
     category_name: string;
-    category_type: 'income' | 'expense';
+    category_type: 'income' | 'expense' | 'saving';
 }
 
 export const categories: categoryProps[] = [
@@ -28,6 +28,8 @@ export const categories: categoryProps[] = [
     { category_id: 'cat003', category_name: 'Investments', category_type: 'income' },
     { category_id: 'cat004', category_name: 'Gift', category_type: 'income' },
     { category_id: 'cat005', category_name: 'Other Income', category_type: 'income' },
+
+    {category_id: '6851a2d03911117b7c684d62', category_name:'Other', category_type:'saving'},
 
     { category_id: '6850501f749494f51d2ea194', category_name: 'Food', category_type: 'expense' },
     { category_id: 'cat007', category_name: 'Groceries', category_type: 'expense' },
@@ -240,7 +242,7 @@ const CreateTransactionModal = ({ onClose, isModal }: createTransactionModalProp
                             className={`bg-gray-300 dark:bg-gray-700 text-black dark:text-white p-2 rounded w-full focus:outline-none focus:ring-2 ${errors.source ? 'border border-red-500 focus:ring-red-500' : 'focus:ring-blue-500'
                                 }`}
                         >
-                            <option value="">Select source <span>*(Add Banks in user section to select here)</span></option>
+                            <option value="">Select source *Add Banks in user section to select here</option>
                             {payment_sources.map((src) => (
                                 <option key={src} value={src}>
                                     {src}
