@@ -1,5 +1,5 @@
 import { FiX } from "react-icons/fi"
-import { createSavingSchema, savingSchema, type CreateSavingSchema, type SavingSchema } from "../../schemas/savingSchema";
+import { createSavingSchema, type CreateSavingSchema } from "../../schemas/savingSchema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Saving } from "../../interfaces/saving";
@@ -49,7 +49,6 @@ const CreateSavingModal = ({ isCreateModal, closeModal }: { isCreateModal: boole
     });
 
     const selectedSource = watch('source');
-    const selectedNew = watch('isNew');
 
     const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -82,7 +81,7 @@ const CreateSavingModal = ({ isCreateModal, closeModal }: { isCreateModal: boole
 
             return await createSaving(data, controller?.signal);
         },
-        onSuccess: () => {
+        onSuccess: async() => {
             toast.success("Successfully created a saving goal.");
             handleClose();
         },

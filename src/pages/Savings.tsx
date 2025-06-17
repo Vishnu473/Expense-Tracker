@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { useGetSavings } from '../hooks/useSavings';
 import type { Saving } from '../interfaces/saving';
@@ -6,10 +6,15 @@ import SavingModal from '../components/Saving/SavingModal';
 import CreateSavingModal from '../components/Saving/CreateSavingModal';
 
 const Savings = () => {
-  const { data: savings, isLoading } = useGetSavings();
+  const { data: savings, isLoading,error, refetch } = useGetSavings();
   const [isCreateModal, setIsCreateModal] = useState<boolean>(false);
   const [selectedSaving, setSelectedSaving] = useState<Saving | null>(null);
 
+  useEffect(()=>{
+    refetch();
+  },[]);
+
+  if(error) return <div className="text-red-400">{error.message}</div>
   if (isLoading) return <p className="text-center">Loading...</p>;
 
   return (
@@ -26,9 +31,7 @@ const Savings = () => {
       <div className="grid gap-6">
         {savings?.map((saving: Saving) => {
           const percentage = Math.min(
-            100,
-            Math.round((saving.current_amount / saving.amount) * 100)
-          );
+            100,(saving.current_amount / saving.amount) * 100).toFixed(2);
           return (
             <div key={saving._id}
               className="bg-white dark:bg-gray-700 shadow-md rounded-lg flex flex-col gap-5 p-4">

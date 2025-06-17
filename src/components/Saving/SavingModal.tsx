@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { FiX } from 'react-icons/fi';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import type { Saving } from '../../interfaces/saving';
 import { useState } from 'react';
@@ -12,7 +12,6 @@ interface SavingModalProps {
 }
 
 const SavingModal = ({ saving, onClose }: SavingModalProps) => {
-  const queryClient = useQueryClient();
   const [imageUploaded, setImageUploaded] = useState<Boolean>(false);
   const [newPreviewImageUrl, setNewPreviewImageUrl] = useState<string>('');
   const [newImageUrl, setNewImageUrl] = useState<string>('');
@@ -33,7 +32,6 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
     },
     onSuccess: () => {
       toast.success('Goal updated successfully');
-      queryClient.invalidateQueries({ queryKey: ['savings'] });
       onClose();
     },
     onError: (err: any) => {

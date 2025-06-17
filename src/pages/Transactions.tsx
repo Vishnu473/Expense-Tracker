@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useTransactions } from '../hooks/useTransactions';
 import QuickSortButtons from '../components/Transactions/QuickSortButtons';
@@ -12,6 +12,11 @@ const Transactions: React.FC = () => {
   const [isModal, setIsModal] = useState<boolean>(false);
   const [showFilters, setShowFilters] = useState(false);
   const { theme } = useTheme();
+
+  useEffect(() => {
+    refetch();
+  }, []);
+
 
   const themeClasses = theme === "dark"
     ? 'bg-gray-800 text-white'
@@ -31,12 +36,13 @@ const Transactions: React.FC = () => {
     transactions,
     pagination,
     isLoading,
-     error,
+    error,
     activeFiltersCount,
     handleFilterChange,
     handlePageChange,
-    clearFilters
-   } = useTransactions();
+    clearFilters,
+    refetch
+  } = useTransactions();
 
   if (error) {
     return (
@@ -103,7 +109,7 @@ const Transactions: React.FC = () => {
       </main>
 
       <CreateTransactionModal onClose={() => setIsModal(false)} isModal={isModal} />
-      
+
     </div>
   );
 };

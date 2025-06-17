@@ -20,7 +20,7 @@ export const savingSchema = z.object({
         .refine((val) => !isNaN(Date.parse(val)), {
             message: 'Invalid transaction date format',
         })
-        .refine((val) => new Date(val) <= new Date(), {
+        .refine((val) => new Date(val) < new Date(), {
             message: 'Transaction date cannot be in the future',
         }),
         pic:z.string().optional(),

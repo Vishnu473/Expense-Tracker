@@ -17,10 +17,11 @@ export const useTransactions = () => {
   });
 
   // React Query for fetching transactions
-  const { data: transactionsData, isLoading, error } = useQuery({
+  const { data: transactionsData, isLoading, error, refetch } = useQuery({
     queryKey: ['transactions', filters],
     queryFn: () => fetchTransactions(filters),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnMount: false,
+    staleTime: 2 * 60 * 1000, // 2 minutes
   });
 
   const transactions = transactionsData?.data || [];
@@ -65,6 +66,7 @@ export const useTransactions = () => {
     activeFiltersCount,
     handleFilterChange,
     handlePageChange,
-    clearFilters
+    clearFilters, 
+    refetch
   };
 };

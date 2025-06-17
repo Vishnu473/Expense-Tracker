@@ -2,11 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../services/axiosInstance";
 
 export const useGetSavings = () => {
-  return useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['savings'],
     queryFn: async () => {
       const { data } = await axiosInstance.get('/saving/getAll');
       return data;
     },
   });
+  return { data, isLoading, error, refetch };
 };
