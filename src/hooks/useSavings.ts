@@ -8,6 +8,7 @@ export const useGetSavings = () => {
       const { data } = await axiosInstance.get('/saving/getAll');
       return data;
     },
+    refetchOnWindowFocus: false,
   });
   return { data, isLoading, error, refetch };
 };

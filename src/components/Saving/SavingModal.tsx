@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { FiX } from 'react-icons/fi';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import type { Saving } from '../../interfaces/saving';
 import { useState } from 'react';
@@ -16,6 +16,7 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
   const [newPreviewImageUrl, setNewPreviewImageUrl] = useState<string>('');
   const [newImageUrl, setNewImageUrl] = useState<string>('');
 
+  const queryClient = useQueryClient();
   const { register, handleSubmit,reset } = useForm({
     defaultValues: {
       purpose: saving.purpose,
@@ -31,6 +32,7 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
       return res.data;
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['savings'] });
       toast.success('Goal updated successfully');
       onClose();
     },

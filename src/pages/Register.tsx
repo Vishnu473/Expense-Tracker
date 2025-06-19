@@ -9,6 +9,7 @@ import { setCredentials } from "../redux/slices/authSlice";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import clsx from "clsx";
+import { fetchAndSetBankAccounts } from "../utils/fetchAndSetBankAccounts";
 
 const Register = () => {
     const dispatch = useDispatch();
@@ -24,8 +25,9 @@ const Register = () => {
 
     const { mutate, isPending } = useMutation({
         mutationFn: registerUser,
-        onSuccess: (res) => {
+        onSuccess: async(res) => {
             dispatch(setCredentials(res.data));
+             await fetchAndSetBankAccounts(dispatch);
             toast.success("Registration successful");
             navigate("/dashboard");
         },

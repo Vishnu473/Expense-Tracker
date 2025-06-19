@@ -9,6 +9,7 @@ import { setCredentials } from "../redux/slices/authSlice";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import clsx from "clsx";
+import { fetchAndSetBankAccounts } from "../utils/fetchAndSetBankAccounts";
 
 const Login = () => {
     const dispatch = useDispatch();
@@ -24,8 +25,9 @@ const Login = () => {
 
     const { mutate, isPending } = useMutation({
         mutationFn: loginUser,
-        onSuccess: (res) => {
+        onSuccess: async(res) => {
             dispatch(setCredentials(res.data));
+             await fetchAndSetBankAccounts(dispatch);
             toast.success("Logged in!");
             navigate("/dashboard");
         },

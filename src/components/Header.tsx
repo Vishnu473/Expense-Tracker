@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from '../redux/store';
 import { logout } from "../redux/slices/authSlice";
 import { toast } from "react-toastify";
+import { clearBankAccounts } from "../redux/slices/bankSlice";
 
 const navLinks = [
   { name: "Dashboard", path: "/dashboard" },
@@ -52,6 +53,7 @@ const Header = () => {
           {
             user ?
             <button onClick={() => {
+              dispatch(clearBankAccounts());
               dispatch(logout());
               toast.info("Logged out!");
             }}

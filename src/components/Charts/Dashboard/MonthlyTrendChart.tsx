@@ -1,0 +1,28 @@
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { useMonthlyTrendAnalytics } from '../../../hooks/useAnalytics';
+
+const MonthlyTrendChart = () => {
+  const { data, isLoading, isError } = useMonthlyTrendAnalytics();
+
+  if (isLoading) return <p>Loading Monthly Trend...</p>;
+  if (isError) return <p>Failed to load trend chart.</p>;
+
+  return (
+    <div className="p-4 rounded-lg shadow bg-white dark:bg-gray-800">
+      <h2 className="text-lg font-semibold mb-2 dark:text-white">Monthly Income vs Expense</h2>
+      <ResponsiveContainer width="100%" height={300}>
+        <LineChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="month" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Line type="monotone" dataKey="income" stroke="#4ade80" strokeWidth={2} />
+          <Line type="monotone" dataKey="expense" stroke="#f87171" strokeWidth={2} />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
+
+export default MonthlyTrendChart;

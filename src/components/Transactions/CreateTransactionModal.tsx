@@ -9,6 +9,8 @@ import { useEffect, useRef } from 'react';
 import { createTransactionApi } from '../../services/api/transactionApi';
 import { toast } from 'react-toastify';
 import { useQueryClient } from '@tanstack/react-query';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../redux/store';
 
 
 interface createTransactionModalProps {
@@ -51,10 +53,10 @@ export const categories: categoryProps[] = [
 export const paymentApps = ['GPay', 'PhonePe', 'Paytm', 'AmazonPay', 'RazorPay', 'Other'];
 export const sources = ['Cash', 'Bank Account', 'Other'];
 export const status = ['Pending', 'Success', 'Failed'];
-export const bankAccounts = ['ICICI'];
 
 const CreateTransactionModal = ({ onClose, isModal }: createTransactionModalProps) => {
-
+    
+    const bankAccounts = useSelector((state: RootState) => state.bank.bankAccounts);
     const payment_sources = bankAccounts.length !== 0 ? sources : sources.filter((source) => source !== 'Bank Account');
 
     const queryClient = useQueryClient();

@@ -10,20 +10,26 @@ import { useTheme } from "../context/ThemeContext";
 import { FaRegEdit, FaTrash, FaUniversity } from 'react-icons/fa'
 import { ThemeToggleRow } from "../components/Settings/ToggleThemeRow";
 import { RenameBankModal } from "../components/Settings/RenameBankModal";
+import { useDispatch, useSelector } from "react-redux";
+import { addBankAccount as addToStore } from "../redux/slices/bankSlice";
+import { renameBankAccount as renameInStore } from "../redux/slices/bankSlice";
+import { deleteBankAccount as deleteFromStore } from "../redux/slices/bankSlice";
+import type { RootState } from "../redux/store";
 
 const Settings = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [newAccountName, setNewAccountName] = useState('');
   const { theme, toggleTheme } = useTheme();
   const [initialProfile, setInitialProfile] = useState<ProfileForm | null>(null);
-
+  const dispatch = useDispatch();
 
   const { data: userData } = useUser();
   const updateUserMutation = useUpdateUser();
-  const { data: bankAccounts } = useBankAccounts();
   const deleteMutation = useDeleteBankAccount();
   const renameMutation = useRenameBankAccount();
   const addMutation = useAddBankAccount();
+
+  const bankAccounts = useSelector((state: RootState) => state.bank.bankAccounts);
 
   const {
     register,
@@ -64,6 +70,8 @@ const Settings = () => {
 
 
   const onSubmit = (data: ProfileForm) => {
+    console.log(data);
+
     updateUserMutation.mutate(data, {
       onSuccess: () => toast.success('Profile updated'),
     });
@@ -71,12 +79,18 @@ const Settings = () => {
 
   const handleAddAccount = () => {
     if (newAccountName.trim()) {
+      dispatch(addToStore(newAccountName));
+
       addMutation.mutate(newAccountName, {
         onSuccess: () => {
           toast.success('Account added');
           setNewAccountName('');
           setShowAddModal(false);
         },
+        onError: () => {
+          dispatch(deleteFromStore(newAccountName));
+          toast.error('Failed to add account. Reverted.');
+        }
       });
     }
   };
@@ -90,10 +104,16 @@ const Settings = () => {
   };
 
   const handleRename = (newName: string) => {
+    dispatch(renameInStore({ oldName: selectedBankName, newName }));
+
     renameMutation.mutate({ oldName: selectedBankName, newName }, {
       onSuccess: () => {
         toast.success('Bank account renamed');
         setShowRenameModal(false);
+      },
+      onError: () => {
+        dispatch(renameInStore({ oldName: newName, newName: selectedBankName }));
+        toast.error('Rename failed.');
       }
     });
   };
@@ -155,11 +175,18 @@ const Settings = () => {
                   <FaRegEdit className="text-lg" />
                 </button>
                 <button
-                  onClick={() =>
+                  onClick={() => {
+                    dispatch(deleteFromStore(name));
                     deleteMutation.mutate(name, {
-                      onSuccess: () => toast.success('Account deleted'),
-                    })
-                  }
+                      onSuccess: () => {
+                        toast.success('Account deleted');
+                      },
+                      onError: () => {
+                        dispatch(addToStore(name));
+                        toast.error('Delete failed.');
+                      },
+                    });
+                  }}
                   className="dark:text-gray-300 text-gray-500 hover:underline"
                 >
                   <FaTrash className="text-lg" />

@@ -4,17 +4,21 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Saving } from "../../interfaces/saving";
 import { useEffect, useRef, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { createSaving, uploadImage } from "../../services/api/savingApi";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../redux/store";
 
 export const paymentApps = ['GPay', 'PhonePe', 'Paytm', 'AmazonPay', 'RazorPay', 'Other'];
 export const sources = ['Cash', 'Bank Account', 'Other'];
 export const status = ['Pending', 'Success', 'Failed'];
-export const bankAccounts = ['ICICI'];
+
 
 const CreateSavingModal = ({ isCreateModal, closeModal }: { isCreateModal: boolean, closeModal: () => void }) => {
+    const queryClient = useQueryClient();
 
+    const bankAccounts = useSelector((state: RootState) => state.bank.bankAccounts);
     const [imageUploaded, setImageUploaded] = useState<Boolean>(false);
     const [newPreviewImageUrl, setNewPreviewImageUrl] = useState<string>('');
     const [newImageUrl, setNewImageUrl] = useState<string>('');
@@ -81,7 +85,8 @@ const CreateSavingModal = ({ isCreateModal, closeModal }: { isCreateModal: boole
 
             return await createSaving(data, controller?.signal);
         },
-        onSuccess: async() => {
+        onSuccess: async () => {
+            queryClient.invalidateQueries({ queryKey: ['savings'] });
             toast.success("Successfully created a saving goal.");
             handleClose();
         },
@@ -109,16 +114,16 @@ const CreateSavingModal = ({ isCreateModal, closeModal }: { isCreateModal: boole
     const onSubmit = async (data: CreateSavingSchema) => {
         console.log(data);
         const today = new Date();
-        const newSaving: Saving = { 
+        const newSaving: Saving = {
             ...data,
-            is_completed: false, 
-            user: '', 
-            pic: newImageUrl, 
-            transaction_date:today.toISOString().split('T')[0],
+            is_completed: false,
+            user: '',
+            pic: newImageUrl,
+            transaction_date: today.toISOString().split('T')[0],
             current_amount: 0
-          };
-          console.log(newSaving);
-          
+        };
+        console.log(newSaving);
+
         try {
             await savingMutation.mutateAsync(newSaving);
         } catch (error) {
@@ -218,7 +223,7 @@ const CreateSavingModal = ({ isCreateModal, closeModal }: { isCreateModal: boole
                                 </p>
                             )}
                         </div>
-                        
+
 
                     </div>
                     <div className="flex-1">

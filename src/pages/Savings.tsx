@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { format } from 'date-fns';
 import { useGetSavings } from '../hooks/useSavings';
 import type { Saving } from '../interfaces/saving';
@@ -6,13 +6,9 @@ import SavingModal from '../components/Saving/SavingModal';
 import CreateSavingModal from '../components/Saving/CreateSavingModal';
 
 const Savings = () => {
-  const { data: savings, isLoading,error, refetch } = useGetSavings();
+  const { data: savings, isLoading,error } = useGetSavings();
   const [isCreateModal, setIsCreateModal] = useState<boolean>(false);
   const [selectedSaving, setSelectedSaving] = useState<Saving | null>(null);
-
-  useEffect(()=>{
-    refetch();
-  },[]);
 
   if(error) return <div className="text-red-400">{error.message}</div>
   if (isLoading) return <p className="text-center">Loading...</p>;

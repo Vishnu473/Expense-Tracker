@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
-import authReducer from './slices/authSlice';
+import authReducer, { type AuthState } from './slices/authSlice';
+import bankReducer from './slices/bankSlice';
 
 const loadFromStorage = () => {
   try {
@@ -10,17 +11,26 @@ const loadFromStorage = () => {
   }
 }
 
-const saveToStorage = (state:any) => {
+const saveToStorage = (state: AuthState) => {
   try {
-    localStorage.setItem("authstate",JSON.stringify(state));
+    const { user, token } = state;
+    if (user) {
+      const minimalUser = {
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+      };
+      localStorage.setItem("authstate", JSON.stringify({ user: minimalUser, token }));
+    }
   } catch (error) {
-    
+    console.error("Failed to set the localStorage");
   }
-}
+};
 
 export const store = configureStore({
   reducer: {
-    auth:authReducer
+    auth:authReducer,
+    bank:bankReducer
   },
   preloadedState:{
     auth:loadFromStorage(),
