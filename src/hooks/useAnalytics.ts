@@ -13,29 +13,29 @@ export const useMonthlyTrendAnalytics = () =>
     queryFn: () => fetchAnalytics('/analytics/monthly-trend'),
   });
 
-// export const useCategoryExpenseAnalytics = () =>
-//   useQuery({
-//     queryKey: ['category-expense'],
-//     queryFn: () => fetchAnalytics('/analytics/expenses-by-category'),
-//   });
+export const useCategoryExpenseAnalytics = () =>
+  useQuery({
+    queryKey: ['category-expense'],
+    queryFn: () => fetchAnalytics('/analytics/expenses-by-category'),
+  });
 
-// export const useSourceSpendingAnalytics = () =>
-//   useQuery({
-//     queryKey: ['source-spending'],
-//     queryFn: () => fetchAnalytics('/analytics/spending-by-source'),
-//   });
+export const useSourceSpendingAnalytics = () =>
+  useQuery({
+    queryKey: ['source-spending'],
+    queryFn: () => fetchAnalytics('/analytics/spending-by-source'),
+  });
 
-// export const usePaymentAppAnalytics = () =>
-//   useQuery({
-//     queryKey: ['payment-app-usage'],
-//     queryFn: () => fetchAnalytics('/analytics/payment-app-usage'),
-//   });
+export const usePaymentAppAnalytics = () =>
+  useQuery({
+    queryKey: ['payment-app-usage'],
+    queryFn: () => fetchAnalytics('/analytics/payment-app-usage'),
+  });
 
-// export const useSavingsProgressAnalytics = () =>
-//   useQuery({
-//     queryKey: ['savings-progress'],
-//     queryFn: () => fetchAnalytics('/analytics/saving-progress'),
-//   });
+export const useSavingsProgressAnalytics = () =>
+  useQuery({
+    queryKey: ['savings-progress'],
+    queryFn: () => fetchAnalytics('/analytics/saving-progress'),
+  });
 
 export const useFinancialOverviewAnalytics = () =>
   useQuery({
@@ -43,8 +43,8 @@ export const useFinancialOverviewAnalytics = () =>
     queryFn: () => fetchAnalytics('/analytics/financial-overview'),
   });
 
-// export const useBalanceGrowthAnalytics = () =>
-//   useQuery({
-//     queryKey: ['balance-growth'],
-//     queryFn: () => fetchAnalytics('/analytics/balance-growth'),
-//   });
+export const useBalanceGrowthAnalytics = () =>
+  useQuery({
+    queryKey: ['balance-growth'],
+    queryFn: () => fetchAnalytics('/analytics/balance-growth'),
+  });

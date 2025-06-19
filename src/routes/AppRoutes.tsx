@@ -3,7 +3,7 @@ import LandingPage from "../pages/LandingPage";
 import Dashboard from "../pages/Dashboard";
 import Transactions from "../pages/Transactions";
 import Savings from "../pages/Savings";
-import Reports from "../pages/Reports";
+// import Reports from "../pages/Reports";
 import Settings from "../pages/Settings";
 import Layout from "../components/Layout";
 import Login from "../pages/Login";
@@ -28,7 +28,7 @@ const AppRoutes = () => {
         <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
         <Route path="/transactions" element={<PrivateRoute><Transactions /></PrivateRoute>} />
         <Route path="/savings" element={<PrivateRoute><Savings /></PrivateRoute>} />
-        <Route path="/reports" element={<PrivateRoute><Reports /></PrivateRoute>} />
+        {/* <Route path="/reports" element={<PrivateRoute><Reports /></PrivateRoute>} /> */}
         <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
       </Route>
       <Route path="*" element={<Navigate to="/" />} />
