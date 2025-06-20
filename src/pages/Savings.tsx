@@ -4,6 +4,7 @@ import { useGetSavings } from '../hooks/useSavings';
 import type { Saving } from '../interfaces/saving';
 import SavingModal from '../components/Saving/SavingModal';
 import CreateSavingModal from '../components/Saving/CreateSavingModal';
+import ProgressBar from '../components/Saving/ProgressBar';
 
 const Savings = () => {
   const { data: savings, isLoading,error } = useGetSavings();
@@ -61,10 +62,7 @@ const Savings = () => {
                 <div className='px-1'>
                   <h3 className='font-semibold text-black dark:text-white mb-2'>Progress</h3>
                   <div className="w-full h-1.5 bg-zinc-200 dark:bg-gray-400 rounded-full overflow-hidden mb-1">
-                    <div
-                      className="h-full bg-blue-600 dark:bg-gray-900 rounded-md transition-all duration-700"
-                      style={{ width: `${percentage}%` }}
-                    ></div>
+                    <ProgressBar targetPercent={parseFloat(percentage)} />
                   </div>
                   <p className="text-xs text-zinc-500 dark:text-gray-400 mt-2">
                     ₹{saving.current_amount.toLocaleString()} of ₹

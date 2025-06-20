@@ -13,14 +13,14 @@ const loadFromStorage = () => {
 
 const saveToStorage = (state: AuthState) => {
   try {
-    const { user, token } = state;
+    const { user } = state;
     if (user) {
       const minimalUser = {
         name: user.name,
         email: user.email,
         phone: user.phone,
       };
-      localStorage.setItem("authstate", JSON.stringify({ user: minimalUser, token }));
+      localStorage.setItem("authstate", JSON.stringify({ user: minimalUser }));
     }
   } catch (error) {
     console.error("Failed to set the localStorage");

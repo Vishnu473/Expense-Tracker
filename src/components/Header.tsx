@@ -8,6 +8,7 @@ import type { RootState } from '../redux/store';
 import { logout } from "../redux/slices/authSlice";
 import { toast } from "react-toastify";
 import { clearBankAccounts } from "../redux/slices/bankSlice";
+import { redirectToLogin } from "../services/axiosInstance";
 
 const navLinks = [
   { name: "Dashboard", path: "/dashboard" },
@@ -22,9 +23,9 @@ const Header = () => {
   const location = useLocation();
 
   const toggleMenu = () => setOpen(!open);
-  const {theme,toggleTheme} = useTheme();
+  const { theme, toggleTheme } = useTheme();
 
-  const user = useSelector((state:RootState)=> state.auth.user);
+  const user = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
 
   return (
@@ -52,13 +53,13 @@ const Header = () => {
           </button>
           {
             user ?
-            <button onClick={() => {
-              dispatch(clearBankAccounts());
-              dispatch(logout());
-              toast.info("Logged out!");
-            }}
-            className="flex justify-center items-center gap-1 text-red-500 hover:underline">
-              <FiLogOut/>Logout</button> : null
+              <button onClick={() => {
+                dispatch(clearBankAccounts());
+                dispatch(logout());
+                toast.info("Logged out!");
+              }}
+                className="flex justify-center items-center gap-1 text-red-500 hover:underline">
+                <FiLogOut />Logout</button> : null
           }
         </nav>
 
@@ -87,12 +88,19 @@ const Header = () => {
           </button>
           {
             user ?
-            <button onClick={() => {
-              dispatch(logout());
-              toast.info("Logged out!");
-            }}
-            className="flex justify-center items-center gap-1 text-red-500 hover:underline">
-              <FiLogOut/>Logout</button> : null
+              <button
+                onClick={async () => {
+                  try {
+                    await redirectToLogin();          
+                    dispatch(logout());              
+                    toast.info("Logged out!");
+                  } catch (err) {
+                    console.error("Logout failed", err);
+                    toast.error("Something went wrong while logging out.");
+                  }
+                }}
+                className="flex justify-center items-center gap-1 text-red-500 hover:underline">
+                <FiLogOut />Logout</button> : null
           }
         </nav>
       )}

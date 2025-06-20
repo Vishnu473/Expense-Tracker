@@ -10,12 +10,10 @@ interface User {
 
 export interface AuthState {
   user: User | null;
-  token: string | null;
 }
 
 const initialState: AuthState = {
   user: null,
-  token: null,
 };
 
 const authSlice = createSlice({
@@ -24,11 +22,9 @@ const authSlice = createSlice({
   reducers: {
     setCredentials: (state, action: PayloadAction<AuthState>) => {
       state.user = action.payload.user;
-      state.token = action.payload.token;
     },
     logout: (state) => {
       state.user = null;
-      state.token = null;
     },
   },
 });

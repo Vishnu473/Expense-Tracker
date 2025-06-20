@@ -8,7 +8,7 @@ const FinancialOverviewChart = () => {
   if (isError) return <p>Failed to load financial overview.</p>;
 
   return (
-    <div className="p-4 rounded-lg shadow bg-white dark:bg-gray-800">
+    <div className="p-4 rounded-lg shadow bg-white dark:bg-gray-800 flex-1">
       <h2 className="text-lg font-semibold mb-2 dark:text-white">Monthly Financial Overview</h2>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data} stackOffset="sign">

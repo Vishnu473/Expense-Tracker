@@ -5,6 +5,8 @@ import type { RootState } from "../redux/store";
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const user = useSelector((state: RootState) => state.auth.user);
 
+  // if (user === null) return <div>🔒 Securing access...</div>;
+  
   if (!user) return <Navigate to="/login" />;
 
   return <>{children}</>;
