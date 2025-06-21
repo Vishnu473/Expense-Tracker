@@ -2,11 +2,13 @@ import { useRef } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { motion } from "framer-motion";
-import BalanceGrowthChart from "../components/Charts/Reports/BalanceGrowthChart";
-import CategoryExpenseChart from "../components/Charts/Reports/CategoryExpenseChart";
-import SavingsProgressChart from "../components/Charts/Reports/SavingProgressChart";
-import SourceSpendingChart from "../components/Charts/Reports/SourceSpendingchart";
-import PaymentAppAnalyticsChart from "../components/Charts/Reports/PaymentAnalyticsChart";
+import { lazy, Suspense } from "react";
+
+const BalanceGrowthChart = lazy(() => import("../components/Charts/Reports/BalanceGrowthChart"));
+const CategoryExpenseChart = lazy(() => import("../components/Charts/Reports/CategoryExpenseChart"));
+const SavingsProgressChart = lazy(() => import("../components/Charts/Reports/SavingProgressChart"));
+const SourceSpendingChart = lazy(() => import("../components/Charts/Reports/SourceSpendingchart"));
+const PaymentAppAnalyticsChart = lazy(() => import("../components/Charts/Reports/PaymentAnalyticsChart"));
 
 export default function Reports() {
   const chartRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -49,12 +51,12 @@ export default function Reports() {
   };
 
   const charts = [
-    <BalanceGrowthChart key="balance" />,
-    <CategoryExpenseChart key="category" />,
-    <PaymentAppAnalyticsChart key="payment" />,
-    <SavingsProgressChart key="savings" />,
-    <SourceSpendingChart key="source" />,
-  ];
+  <Suspense fallback={<div>📈 Loading...</div>}><BalanceGrowthChart key="balance" /></Suspense>,
+  <Suspense fallback={<div>📈 Loading...</div>}><CategoryExpenseChart key="category" /></Suspense>,
+  <Suspense fallback={<div>📈 Loading...</div>}><PaymentAppAnalyticsChart key="payment" /></Suspense>,
+  <Suspense fallback={<div>📈 Loading...</div>}><SavingsProgressChart key="savings" /></Suspense>,
+  <Suspense fallback={<div>📈 Loading...</div>}><SourceSpendingChart key="source" /></Suspense>,
+];
 
   return (
     <div className="p-6 md:p-6 bg-white dark:bg-gray-900 min-h-screen">

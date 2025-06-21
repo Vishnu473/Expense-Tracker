@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface ProgressBarProps {
   targetPercent: number;
 }
 
-const ProgressBar = ({ targetPercent }: ProgressBarProps) => {
+const ProgressBar = React.memo(({ targetPercent }: ProgressBarProps) => {
   const [width, setWidth] = useState(0);
 
   useEffect(() => {
@@ -23,6 +23,6 @@ const ProgressBar = ({ targetPercent }: ProgressBarProps) => {
       />
     </div>
   );
-};
+});
 
 export default ProgressBar;

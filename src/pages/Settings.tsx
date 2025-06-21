@@ -1,7 +1,7 @@
 import { toast } from "react-toastify";
 import { profileSchema, type ProfileForm } from "../schemas/profileSchema";
 import { useEffect, useState } from "react";
-import { useAddBankAccount, useBankAccounts, useDeleteBankAccount, useRenameBankAccount } from "../hooks/useBankAccounts";
+import { useAddBankAccount, useDeleteBankAccount, useRenameBankAccount } from "../hooks/useBankAccounts";
 import { useUpdateUser, useUser } from "../hooks/useUser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";

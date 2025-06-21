@@ -155,6 +155,7 @@ const CreateSavingModal = ({ isCreateModal, closeModal }: { isCreateModal: boole
                                 <img
                                     src={newPreviewImageUrl}
                                     alt="Goal"
+                                    loading="lazy"
                                     className="h-full w-full object-cover"
                                 />
                             ) : (

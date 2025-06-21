@@ -20,7 +20,7 @@ const Transactions: React.FC = () => {
 
   const themeClasses = theme === "dark"
     ? 'bg-gray-800 text-white'
-    : 'bg-gray-50 text-gray-900';
+    : 'bg-white text-gray-900';
 
   const cardClasses = theme === "dark"
     ? 'bg-gray-800 border-gray-700'

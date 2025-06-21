@@ -1,17 +1,27 @@
+import { lazy, Suspense, useCallback } from 'react';
+
+const CreateSavingModal = lazy(() => import('../components/Saving/CreateSavingModal'));
+const SavingModal = lazy(() => import('../components/Saving/SavingModal'));
+
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { useGetSavings } from '../hooks/useSavings';
 import type { Saving } from '../interfaces/saving';
-import SavingModal from '../components/Saving/SavingModal';
-import CreateSavingModal from '../components/Saving/CreateSavingModal';
 import ProgressBar from '../components/Saving/ProgressBar';
 
 const Savings = () => {
-  const { data: savings, isLoading,error } = useGetSavings();
+  const { data: savings, isLoading, error } = useGetSavings();
+
   const [isCreateModal, setIsCreateModal] = useState<boolean>(false);
   const [selectedSaving, setSelectedSaving] = useState<Saving | null>(null);
+  
+  //Prevent unnecessary re-creations of the modal control functions that may cause re-renders.
+  const openCreateModal = useCallback(() => setIsCreateModal(true), []);
+  const closeCreateModal = useCallback(() => setIsCreateModal(false), []);
+  const openEditModal = useCallback((saving: Saving) => setSelectedSaving(saving), []);
+  const closeEditModal = useCallback(() => setSelectedSaving(null), []);
 
-  if(error) return <div className="text-red-400">{error.message}</div>
+  if (error) return <div className="text-red-400">{error.message}</div>
   if (isLoading) return <p className="text-center">Loading...</p>;
 
   return (
@@ -20,7 +30,7 @@ const Savings = () => {
         <h2 className="text-2xl font-bold dark:text-white">Savings Goals</h2>
         <button
           className="inline-flex items-center gap-2 px-3 py-1.5 border dark:border-gray-400 rounded-md text-sm dark:text-white bg-zinc-100 dark:bg-gray-600 dark:hover:bg-gray-700 hover:bg-zinc-200"
-          onClick={() => { setIsCreateModal(true)}}
+          onClick={openCreateModal}
         >Add Goal
         </button>
       </div>
@@ -28,7 +38,7 @@ const Savings = () => {
       <div className="grid gap-6">
         {savings?.map((saving: Saving) => {
           const percentage = Math.min(
-            100,(saving.current_amount / saving.amount) * 100).toFixed(2);
+            100, (saving.current_amount / saving.amount) * 100).toFixed(2);
           return (
             <div key={saving._id}
               className="bg-white dark:bg-gray-700 shadow-md rounded-lg flex flex-col gap-5 p-4">
@@ -47,13 +57,14 @@ const Savings = () => {
                     </p>
                     <button
                       className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 border dark:border-1 rounded-md text-sm dark:text-white bg-zinc-100 dark:bg-gray-500 dark:border-gray-400 dark:hover:bg-gray-600 hover:bg-zinc-200"
-                      onClick={() => setSelectedSaving(saving)}
+                      onClick={() => openEditModal(saving)}
                     >Edit Goal
                     </button>
                   </div>
                   <div className='flex-1'>
                     <img
                       src={saving?.pic}
+                      loading="lazy"
                       alt="goal-pic"
                       className="w-full h-28 object-cover rounded-lg"
                     />
@@ -75,14 +86,18 @@ const Savings = () => {
           );
         })}
       </div>
+
       {selectedSaving && (
-        <SavingModal 
-          saving={selectedSaving}
-          onClose={() => setSelectedSaving(null)}
-        />
+        <Suspense fallback={<div>Loading Edit Modal...</div>}>
+          <SavingModal saving={selectedSaving} onClose={closeEditModal} />
+        </Suspense>
       )}
 
-      <CreateSavingModal isCreateModal={isCreateModal} closeModal={() => setIsCreateModal(false)}/>
+      {isCreateModal && (
+        <Suspense fallback={<div>Loading Create Modal...</div>}>
+          <CreateSavingModal isCreateModal={isCreateModal} closeModal={closeCreateModal} />
+        </Suspense>
+      )}
     </div>
   );
 };

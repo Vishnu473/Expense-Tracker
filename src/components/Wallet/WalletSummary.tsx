@@ -19,7 +19,7 @@ export const WalletSummary = ({ balance, income, expense, savings }: WalletData)
 };
 
 const SummaryCard = React.memo(({ label, value }: { label: string; value: number}) => (
-  <div className={`rounded-lg p-4 bg-gray-200 dark:bg-gray-700`}>
+  <div className={`rounded-lg p-4 bg-white shadow dark:shadow-gray-500 dark:bg-gray-800`}>
     <div className="text-md font-semibold dark:text-gray-100">{label}</div>
     <div className={`text-2xl font-bold dark:text-white`}>₹ {value.toLocaleString()}</div>
   </div>

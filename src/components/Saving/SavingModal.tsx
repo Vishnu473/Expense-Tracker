@@ -17,16 +17,16 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
   const [newImageUrl, setNewImageUrl] = useState<string>('');
 
   const queryClient = useQueryClient();
-  const { register, handleSubmit,reset } = useForm({
+  const { register, handleSubmit, reset, formState: { errors }, } = useForm({
     defaultValues: {
       purpose: saving.purpose,
       addAmount: 0,
-      transaction_date:''
+      transaction_date: ''
     },
   });
 
   const { mutate: updateGoal, isPending } = useMutation({
-    mutationFn: async (data: { purpose: string; pic: string, addAmount: number, transaction_date : string }) => {
+    mutationFn: async (data: { purpose: string; pic: string, addAmount: number, transaction_date: string }) => {
       const updated = { ...saving, purpose: data.purpose, pic: data.pic, current_amount: saving.current_amount + data.addAmount, transaction_date: data.transaction_date };
       const res = await axiosInstance.put(`/saving/${saving._id}`, updated);
       return res.data;
@@ -76,9 +76,9 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
     }
   };
 
-  const onSubmit = async (data: { purpose: string; addAmount: number; transaction_date:string }) => {
+  const onSubmit = async (data: { purpose: string; addAmount: number; transaction_date: string }) => {
     const imageUrl = imageUploaded ? newImageUrl : saving.pic ?? '';
-    updateGoal({ purpose: data.purpose, pic: imageUrl, addAmount: Number(data.addAmount), transaction_date:data.transaction_date });
+    updateGoal({ purpose: data.purpose, pic: imageUrl, addAmount: Number(data.addAmount), transaction_date: data.transaction_date });
     handleModalClose();
   };
 
@@ -110,6 +110,7 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
             <div className='flex flex-col space-y-2 flex-1'>
               <p className='dark:text-gray-300 text-gray-800 text-sm'>old image:</p>
               <img className='h-40 rounded object-cover'
+                loading="lazy"
                 src={saving?.pic ?? 'https://www.rd.com/wp-content/uploads/2020/04/hanauma-bay-on-the-island-of-o-ahu-in-the-united-states-of-america-e1643060191903.jpg'} alt={saving?.purpose} />
 
             </div>
@@ -124,6 +125,7 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
                   <img
                     src={newPreviewImageUrl}
                     alt="Goal"
+                    loading="lazy"
                     className="h-full w-full object-cover"
                   />
                 ) : (
@@ -148,6 +150,10 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
               className="bg-gray-700 text-white p-2 rounded w-full"
               placeholder="Enter new purpose"
             />
+            {errors.purpose && (
+              <p className="text-red-400 text-sm">{errors.purpose.message}
+              </p>
+            )}
           </div>
           <div>
             <label className="block text-white mb-1">Enter amount:</label>
@@ -157,6 +163,10 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
               className="bg-gray-700 text-white p-2 rounded w-full"
               placeholder="Enter amount"
             />
+            {errors.addAmount && (
+              <p className="text-red-400 text-sm">{errors.addAmount.message}
+              </p>
+            )}
           </div>
           <div>
             <label className="block text-white mb-1">Transaction Date:</label>
@@ -166,6 +176,10 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
               className="bg-gray-700 text-white p-2 rounded w-full"
               placeholder="Enter transaction date"
             />
+            {errors.transaction_date && (
+              <p className="text-red-400 text-sm">{errors.transaction_date.message}
+              </p>
+            )}
           </div>
           <input
             type="submit"
