@@ -1,14 +1,18 @@
 import { Route, Routes, Navigate } from "react-router-dom";
-import LandingPage from "../pages/LandingPage";
-import Dashboard from "../pages/Dashboard";
-import Transactions from "../pages/Transactions";
-import Savings from "../pages/Savings";
-import Reports from "../pages/Reports";
-import Settings from "../pages/Settings";
+import { lazy } from "react";
+
 import Layout from "../components/Layout";
-import Login from "../pages/Login";
 import PrivateRoute from "./PrivateRoute";
-import Register from "../pages/Register";
+
+const LandingPage = lazy(() => import("../pages/LandingPage"));
+const Dashboard = lazy(() => import("../pages/Dashboard"));
+const Transactions = lazy(() => import("../pages/Transactions"));
+const Savings = lazy(() => import("../pages/Savings"));
+const Reports = lazy(() => import("../pages/Reports"));
+const Settings = lazy(() => import("../pages/Settings"));
+const Login = lazy(() => import("../pages/Login"));
+const Register = lazy(() => import("../pages/Register"));
+
 
 const AppRoutes = () => {
   return (

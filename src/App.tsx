@@ -1,14 +1,15 @@
 import { BrowserRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import AppRoutes from './routes/AppRoutes';
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { getBankAccounts } from './services/api/bankApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { setBankAccounts } from './redux/slices/bankSlice';
 import type { RootState } from './redux/store';
 import axiosInstance from './services/axiosInstance';
 import { setCredentials } from './redux/slices/authSlice';
+
+const AppRoutes = lazy(() => import('./routes/AppRoutes'));
 
 function App() {
   const dispatch = useDispatch();
@@ -49,7 +50,10 @@ function App() {
   return (
     <>
       <BrowserRouter>
-        <AppRoutes />
+        <Suspense fallback={<div>⏳ Loading routes...</div>}>
+          <AppRoutes />
+        </Suspense>
+
         <ToastContainer position="top-right" autoClose={3000} hideProgressBar={true} />
       </BrowserRouter>
     </>
