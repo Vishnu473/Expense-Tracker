@@ -142,4 +142,4 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
   );
 };
 
-export default TransactionFilters;
+export default React.memo(TransactionFilters);

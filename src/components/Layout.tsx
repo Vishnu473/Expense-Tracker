@@ -5,7 +5,7 @@ const Layout = () => {
   return (
     <>
       <Header />
-      <main className="pt-20 bg-white dark:bg-gray-800">
+      <main className="pt-12 bg-white dark:bg-gray-800">
         <Outlet />
       </main>
     </>

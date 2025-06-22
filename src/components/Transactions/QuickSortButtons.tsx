@@ -58,4 +58,4 @@ const QuickSortButtons: React.FC<QuickSortButtonsProps> = ({
   );
 };
 
-export default QuickSortButtons;
+export default React.memo(QuickSortButtons);

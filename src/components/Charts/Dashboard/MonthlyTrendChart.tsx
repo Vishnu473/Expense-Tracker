@@ -8,7 +8,7 @@ const MonthlyTrendChart = () => {
   if (isError) return <p>Failed to load trend chart.</p>;
 
   return (
-    <div className="p-4 rounded-lg shadow bg-white dark:bg-gray-800 flex-1">
+    <div className="p-4 rounded-lg shadow flex flex-col gap-5 bg-white dark:bg-gray-900 flex-1">
       <h2 className="text-lg font-semibold mb-2 dark:text-white">Monthly Income vs Expense</h2>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>

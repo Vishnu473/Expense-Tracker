@@ -3,48 +3,40 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { getBankAccounts } from './services/api/bankApi';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setBankAccounts } from './redux/slices/bankSlice';
-import type { RootState } from './redux/store';
-import axiosInstance from './services/axiosInstance';
+import axiosInstance, { redirectToLogin } from './services/axiosInstance';
 import { setCredentials } from './redux/slices/authSlice';
+import { getAllCategories } from './services/api/categoryApi';
+import { setCategories } from './redux/slices/categorySlice';
 
 const AppRoutes = lazy(() => import('./routes/AppRoutes'));
 
 function App() {
   const dispatch = useDispatch();
-  const user = useSelector((state: RootState) => state.auth.user);
   const [sessionChecked, setSessionChecked] = useState(false);
 
   useEffect(() => {
-    const initSession = async () => {
-      try {
-        const hasCookie = document.cookie.includes('accessToken');
-        if (!hasCookie) {
-          console.log("No token so silent return from App.tsx");
-          setSessionChecked(true);
-          return;
-        }
-        console.log("Has token so calling user/me....");
+  const initSession = async () => {
+    try {
+      const res = await axiosInstance.get('/user/me', { withCredentials: true });
+      setSessionChecked(true);
+      dispatch(setCredentials({ user: res.data.user }));
 
-        const res = await axiosInstance.get('/user/me', { withCredentials: true });
-        if (!user) {
-          dispatch(setCredentials({ user: res.data.user }));
-          console.log("User set to redux, now setting bank accounts");
-          const banks = await getBankAccounts();
-          dispatch(setBankAccounts(banks));
-        }
+      const banks = await getBankAccounts();
+      dispatch(setBankAccounts(banks));
 
-      } catch (err) {
-        console.error('Session check failed:', err);
-      } finally {
-        setSessionChecked(true);
-      }
-    };
+      const categories = await getAllCategories();
+      dispatch(setCategories(categories));
+    } catch (err) {
+      setSessionChecked(false);
+      console.error("Session invalid or expired. Redirecting to login...");
+      redirectToLogin();
+    }
+  };
 
-    initSession();
-  }, [dispatch]);
-
+  initSession();
+}, []);
   if (!sessionChecked) return <div>🔐 Checking session...</div>;
 
   return (

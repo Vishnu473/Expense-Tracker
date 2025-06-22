@@ -15,6 +15,7 @@ import { addBankAccount as addToStore } from "../redux/slices/bankSlice";
 import { renameBankAccount as renameInStore } from "../redux/slices/bankSlice";
 import { deleteBankAccount as deleteFromStore } from "../redux/slices/bankSlice";
 import type { RootState } from "../redux/store";
+import Categories from "../components/Settings/Categories";
 
 const Settings = () => {
   const [showAddModal, setShowAddModal] = useState(false);
@@ -30,7 +31,8 @@ const Settings = () => {
   const addMutation = useAddBankAccount();
 
   const bankAccounts = useSelector((state: RootState) => state.bank.bankAccounts);
-
+  console.log(bankAccounts);
+  
   const {
     register,
     handleSubmit,
@@ -120,134 +122,138 @@ const Settings = () => {
 
 
   return (
-    <div className="max-w-2xl w-full mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4 dark:text-white">Settings</h1>
+    <div className="bg-gray-100 dark:bg-gray-800">
+      <div className="max-w-4xl w-full mx-auto p-6">
+        <h1 className="text-3xl font-bold mb-4 dark:text-white">Settings</h1>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <label className="text-black dark:text-white block mb-1">Name:</label>
-          <input className={`border-gray-300 border dark:bg-gray-700 text-black dark:text-white p-2 rounded w-full focus:outline-none focus:ring-1 ${errors.name ? 'border border-red-500 focus:ring-red-500' : 'dark:focus:border-blue-600 focus:ring-blue-500'
-            }`} {...register('name')} placeholder="Name" />
-          {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
-        </div>
-        <div>
-          <label className="text-black dark:text-white block mb-1">Email:</label>
-          <input className={`border-gray-300 border dark:bg-gray-700 text-black dark:text-white p-2 rounded w-full focus:outline-none focus:ring-1 ${errors.email ? 'border border-red-500 focus:ring-red-500' : 'dark:focus:border-blue-600 focus:ring-blue-500'
-            }`} {...register('email')} placeholder="Email" />
-          {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
-        </div>
-        <div>
-          <label className="text-black dark:text-white block mb-1">Phone:</label>
-          <input className={`border-gray-300 border dark:bg-gray-700 text-black dark:text-white p-2 rounded w-full focus:outline-none focus:ring-1 ${errors.phone ? 'border border-red-500 focus:ring-red-500' : ' dark:focus:border-blue-600 focus:ring-blue-500'
-            }`} {...register('phone')} placeholder="Phone" />
-          {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
-        </div>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div>
+            <label className="text-black dark:text-white block mb-1">Name:</label>
+            <input className={`border-gray-300 border dark:bg-gray-700 text-black dark:text-white p-2 rounded w-full focus:outline-none focus:ring-1 ${errors.name ? 'border border-red-500 focus:ring-red-500' : 'dark:focus:border-blue-600 focus:ring-blue-500'
+              }`} {...register('name')} placeholder="Name" />
+            {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+          </div>
+          <div>
+            <label className="text-black dark:text-white block mb-1">Email:</label>
+            <input className={`border-gray-300 border dark:bg-gray-700 text-black dark:text-white p-2 rounded w-full focus:outline-none focus:ring-1 ${errors.email ? 'border border-red-500 focus:ring-red-500' : 'dark:focus:border-blue-600 focus:ring-blue-500'
+              }`} {...register('email')} placeholder="Email" />
+            {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+          </div>
+          <div>
+            <label className="text-black dark:text-white block mb-1">Phone:</label>
+            <input className={`border-gray-300 border dark:bg-gray-700 text-black dark:text-white p-2 rounded w-full focus:outline-none focus:ring-1 ${errors.phone ? 'border border-red-500 focus:ring-red-500' : ' dark:focus:border-blue-600 focus:ring-blue-500'
+              }`} {...register('phone')} placeholder="Phone" />
+            {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
+          </div>
 
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
-          disabled={!isChanged || isSubmitting}
-        >
-          Save Changes
-        </button>
+          <button
+            type="submit"
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+            disabled={!isChanged || isSubmitting}
+          >
+            Save Changes
+          </button>
 
-      </form>
+        </form>
 
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-2 dark:text-white">Linked Accounts</h2>
-        <ul className="space-y-2">
-          {bankAccounts?.map((name: string) => (
-            <li
-              key={name}
-              className="flex justify-between items-center p-2 rounded hover:bg-gray-300 hover:dark:bg-gray-700"
-            >
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-sm border border-gray-600 bg-gray-200 dark:bg-gray-700">
-                  <FaUniversity className="dark:text-white text-black" />
+        <div className="mt-8">
+          <h2 className="text-xl font-semibold mb-2 dark:text-white">Linked Accounts</h2>
+          <ul className="space-y-2">
+            {bankAccounts?.map((name: string) => (
+              <li
+                key={name}
+                className="flex justify-between items-center p-2 rounded hover:bg-gray-300 hover:dark:bg-gray-700"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-sm border border-gray-600 bg-gray-200 dark:bg-gray-700">
+                    <FaUniversity className="dark:text-white text-black" />
+                  </div>
+                  <p className="font-medium text-gray-800 dark:text-white">{name}</p>
                 </div>
-                <p className="font-medium text-gray-800 dark:text-white">{name}</p>
-              </div>
-              <div className="space-x-2">
-                <button
-                  onClick={() => openRenameModal(name)}
-                  className="dark:text-gray-300 text-gray-500 hover:underline"
-                >
-                  <FaRegEdit className="text-lg" />
-                </button>
-                <button
-                  onClick={() => {
-                    dispatch(deleteFromStore(name));
-                    deleteMutation.mutate(name, {
-                      onSuccess: () => {
-                        toast.success('Account deleted');
-                      },
-                      onError: () => {
-                        dispatch(addToStore(name));
-                        toast.error('Delete failed.');
-                      },
-                    });
-                  }}
-                  className="dark:text-gray-300 text-gray-500 hover:underline"
-                >
-                  <FaTrash className="text-lg" />
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
+                <div className="space-x-2">
+                  <button
+                    onClick={() => openRenameModal(name)}
+                    className="dark:text-gray-300 text-gray-500 hover:underline"
+                  >
+                    <FaRegEdit className="text-lg" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      dispatch(deleteFromStore(name));
+                      deleteMutation.mutate(name, {
+                        onSuccess: () => {
+                          toast.success('Account deleted');
+                        },
+                        onError: () => {
+                          dispatch(addToStore(name));
+                          toast.error('Delete failed.');
+                        },
+                      });
+                    }}
+                    className="dark:text-gray-300 text-gray-500 hover:underline"
+                  >
+                    <FaTrash className="text-lg" />
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
 
-        <button
-          className="mt-4 px-4 py-2 border rounded text-sm dark:text-white"
-          onClick={() => setShowAddModal(true)}
-        >
-          + Add Account
-        </button>
+          <button
+            className="mt-4 px-4 py-2 border rounded text-sm dark:text-white"
+            onClick={() => setShowAddModal(true)}
+          >
+            + Add Account
+          </button>
 
-        {showAddModal && (
-          <div className="mt-2 flex gap-2 items-center">
-            <input
-              value={newAccountName}
-              onChange={(e) => setNewAccountName(e.target.value)}
-              className="p-2 border rounded focus:border-blue-600 w-full outline-none dark:bg-gray-700 dark:text-white"
-              placeholder="Account Name"
-            />
-            <button
-              onClick={handleAddAccount}
-              disabled={addMutation.isPending}
-              className="bg-green-600 text-white px-4 py-2 rounded disabled:opacity-50"
-            >
-              Add
-            </button>
-            <button
-              onClick={() => setShowAddModal(false)}
-              className="text-gray-600 dark:text-gray-300"
-            >
-              Cancel
-            </button>
-          </div>
-        )}
-      </div>
-      <RenameBankModal
-        isOpen={showRenameModal}
-        onClose={() => setShowRenameModal(false)}
-        initialName={selectedBankName}
-        onRename={handleRename}
-        isLoading={renameMutation.isPending}
-      />
-
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-2 dark:text-white">App Preferences</h2>
-        <div className="flex justify-between items-center p-2 rounded">
-          <div className="flex items-center gap-3">
-            <div className="bg-gray-300 dark:bg-gray-700 border border-gray-600 p-1 rounded-sm">
-              <FiBell className="text-xl text-black dark:text-white" />
+          {showAddModal && (
+            <div className="mt-2 flex gap-2 items-center">
+              <input
+                value={newAccountName}
+                onChange={(e) => setNewAccountName(e.target.value)}
+                className="p-2 border rounded focus:border-blue-600 w-full outline-none dark:bg-gray-700 dark:text-white"
+                placeholder="Account Name"
+              />
+              <button
+                onClick={handleAddAccount}
+                disabled={addMutation.isPending}
+                className="bg-green-600 text-white px-4 py-2 rounded disabled:opacity-50"
+              >
+                Add
+              </button>
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="text-gray-600 dark:text-gray-300"
+              >
+                Cancel
+              </button>
             </div>
-            <p className="text-black dark:text-white">Notifications</p>
-          </div>
-
-          <input type="checkbox" />
+          )}
         </div>
-        <ThemeToggleRow theme={theme} ToggleTheme={toggleTheme} />
+        <RenameBankModal
+          isOpen={showRenameModal}
+          onClose={() => setShowRenameModal(false)}
+          initialName={selectedBankName}
+          onRename={handleRename}
+          isLoading={renameMutation.isPending}
+        />
+
+        <Categories />
+
+        <div className="mt-8">
+          <h2 className="text-xl font-semibold mb-2 dark:text-white">App Preferences</h2>
+          <div className="flex justify-between items-center p-2 rounded">
+            <div className="flex items-center gap-3">
+              <div className="bg-gray-300 dark:bg-gray-700 border border-gray-600 p-1 rounded-sm">
+                <FiBell className="text-xl text-black dark:text-white" />
+              </div>
+              <p className="text-black dark:text-white">Notifications</p>
+            </div>
+
+            <input type="checkbox" />
+          </div>
+          <ThemeToggleRow theme={theme} ToggleTheme={toggleTheme} />
+        </div>
       </div>
     </div>
   );

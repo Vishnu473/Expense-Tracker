@@ -1,5 +1,10 @@
-// components/TransactionTable.tsx
 import React from 'react';
+import { FixedSizeList as List } from 'react-window';
+
+import TransactionRow from './TransactionRow';
+import TransactionCard from './TransactionCard';
+import TransactionCardSkeleton from './skeletons/TransactionCardSkeleton';
+import TransactionRowSkeleton from './skeletons/TransactionRowSkeleton';
 
 export interface Transaction {
   _id: string;
@@ -21,15 +26,14 @@ interface TransactionTableProps {
 const TransactionTable: React.FC<TransactionTableProps> = ({
   transactions,
   isLoading,
-  isDarkMode,
   cardClasses
 }) => {
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
       year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    });
+    }).replace(/ /g, '-');
   };
 
   const formatAmount = (amount: number, type: 'income' | 'expense' | 'saving') => {
@@ -37,7 +41,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
       style: 'currency',
       currency: 'INR'
     }).format(amount);
-    
+
     if (type === 'income') {
       return `+${formatted}`;
     }
@@ -69,12 +73,33 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
   };
 
   return (
-    <div className={`${cardClasses} border rounded-lg overflow-hidden`}>
+    <div className={`${cardClasses} border rounded-lg overflow-hidden`}
+      aria-busy={isLoading} aria-live="polite">
       {isLoading ? (
-        <div className="p-8 text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-500">Loading transactions...</p>
-        </div>
+        <>
+          {/* Desktop Skeletons */}
+          <div className={`transition-opacity duration-500 ease-in-out hidden lg:block overflow-x-auto ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
+            <div className="grid grid-cols-6 bg-gray-50 dark:bg-gray-700 font-medium text-sm text-left px-6 py-4 border-b">
+              <span>Date</span>
+              <span>Category</span>
+              <span>Description</span>
+              <span>Amount</span>
+              <span>Type</span>
+              <span>Status</span>
+            </div>
+            <List height={400} itemCount={10} itemSize={60} width="100%">
+              {({ index, style }) => <TransactionRowSkeleton style={style} key={index} />}
+            </List>
+          </div>
+
+          {/* Mobile Skeletons */}
+          <div className="lg:hidden">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <TransactionCardSkeleton key={i} />
+            ))}
+          </div>
+        </>
+
       ) : transactions.length === 0 ? (
         <div className="p-8 text-center">
           <p className="text-gray-500 mb-4">No transactions found</p>
@@ -86,19 +111,15 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
         <>
           {/* Desktop Table */}
           <div className="hidden lg:block overflow-x-auto">
-            <table className="w-full">
-              <thead className={`${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'} border-b`}>
-                <tr>
-                  <th className="text-left px-6 py-4 font-medium text-sm">Date</th>
-                  <th className="text-left px-6 py-4 font-medium text-sm">Category</th>
-                  <th className="text-left px-6 py-4 font-medium text-sm">Description</th>
-                  <th className="text-left px-6 py-4 font-medium text-sm">Amount</th>
-                  <th className="text-left px-6 py-4 font-medium text-sm">Type</th>
-                  <th className="text-left px-6 py-4 font-medium text-sm">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {transactions.map((transaction: Transaction) => (
+            <div className="grid grid-cols-[1fr_1fr_3fr_1.5fr_1fr_1fr] bg-gray-50 dark:bg-gray-700 font-medium text-sm text-left px-6 py-4 border-b">
+              <span>Date</span>
+              <span>Category</span>
+              <span>Description</span>
+              <span>Amount</span>
+              <span>Type</span>
+              <span>Status</span>
+            </div>
+            {/* {transactions.map((transaction: Transaction) => (
                   <tr key={transaction._id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
                     <td className="px-6 py-4 text-sm">
                       {formatDate(transaction.transaction_date)}
@@ -125,45 +146,44 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
                       </span>
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                ))} */}
+
+            <List
+              height={Math.min(600,transactions.length*60)}
+              itemCount={transactions.length}
+              itemSize={60}
+              width="100%"
+            >
+              {({ index, style }) => (
+                <TransactionRow
+                  key={transactions[index]._id}
+                  transaction={transactions[index]}
+                  style={style}
+                  formatDate={formatDate}
+                  formatAmount={formatAmount}
+                  getStatusColor={getStatusColor}
+                  getTypeColor={getTypeColor}
+                />
+              )}
+            </List>
           </div>
 
           {/* Mobile Cards */}
           <div className="lg:hidden">
-            {transactions.map((transaction: Transaction) => (
-              <div key={transaction._id} className="p-4 border-b border-gray-200 dark:border-gray-700 last:border-b-0">
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <h3 className="font-medium">{transaction.category_name}</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{transaction.description}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className={`font-medium ${
-                      transaction.category_type === 'income' ? 'text-green-600' : transaction.category_type === 'saving' ? 'text-blue-500' : 'text-red-600'
-                    }`}>
-                      {formatAmount(transaction.amount, transaction.category_type)}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {formatDate(transaction.transaction_date)}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(transaction.category_type)}`}>
-                    {transaction.category_type === 'income' ? 'Income' : (transaction.category_type === 'saving' ? 'Saving' : 'Expense')}
-                  </span>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(transaction.status)}`}>
-                    {transaction.status}
-                  </span>
-                </div>
-              </div>
+            {transactions.map(transaction => (
+              <TransactionCard
+                key={transaction._id}
+                transaction={transaction}
+                formatDate={formatDate}
+                formatAmount={formatAmount}
+                getTypeColor={getTypeColor}
+                getStatusColor={getStatusColor}
+              />
             ))}
           </div>
         </>
       )}
-    </div>
+    </div >
   );
 };
 

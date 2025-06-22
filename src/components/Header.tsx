@@ -31,8 +31,8 @@ const Header = () => {
   return (
     <header className="fixed top-0 left-0 w-full backdrop-blur-md backdrop-filter bg-transparent border-b border-gray-400 text-black dark:text-white shadow-md z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
-        <div className="text-2xl font-bold text-blue-600 dark:text-cyan-400">
-          <Link to="/">💰 Expense Tracker</Link>
+        <div className="text-lg md:text-2xl font-bold text-blue-600 dark:text-cyan-400">
+          <Link to="/">💰 E Tracker</Link>
         </div>
 
         <nav className="hidden md:flex space-x-6">

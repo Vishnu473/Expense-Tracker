@@ -10,6 +10,8 @@ import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { fetchAndSetBankAccounts } from "../utils/fetchAndSetBankAccounts";
+import { getAllCategories } from "../services/api/categoryApi";
+import { setCategories } from "../redux/slices/categorySlice";
 
 const Register = () => {
     const dispatch = useDispatch();
@@ -27,7 +29,10 @@ const Register = () => {
         mutationFn: registerUser,
         onSuccess: async(res) => {
             dispatch(setCredentials(res.data));
-             await fetchAndSetBankAccounts(dispatch);
+            await Promise.all([
+                fetchAndSetBankAccounts(dispatch),
+                getAllCategories().then(data => dispatch(setCategories(data)))
+            ]);
             toast.success("Registration successful");
             navigate("/dashboard");
         },

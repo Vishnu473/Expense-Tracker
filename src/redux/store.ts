@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer, { type AuthState } from './slices/authSlice';
 import bankReducer from './slices/bankSlice';
+import categoryReducer from './slices/categorySlice';
 
 const loadFromStorage = () => {
   try {
@@ -30,7 +31,8 @@ const saveToStorage = (state: AuthState) => {
 export const store = configureStore({
   reducer: {
     auth:authReducer,
-    bank:bankReducer
+    bank:bankReducer,
+    category: categoryReducer,
   },
   preloadedState:{
     auth:loadFromStorage(),

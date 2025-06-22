@@ -51,56 +51,58 @@ export default function Reports() {
   };
 
   const charts = [
-  <Suspense fallback={<div>📈 Loading...</div>}><BalanceGrowthChart key="balance" /></Suspense>,
-  <Suspense fallback={<div>📈 Loading...</div>}><CategoryExpenseChart key="category" /></Suspense>,
-  <Suspense fallback={<div>📈 Loading...</div>}><PaymentAppAnalyticsChart key="payment" /></Suspense>,
-  <Suspense fallback={<div>📈 Loading...</div>}><SavingsProgressChart key="savings" /></Suspense>,
-  <Suspense fallback={<div>📈 Loading...</div>}><SourceSpendingChart key="source" /></Suspense>,
-];
+    <Suspense fallback={<div>📈 Loading...</div>}><BalanceGrowthChart key="balance" /></Suspense>,
+    <Suspense fallback={<div>📈 Loading...</div>}><CategoryExpenseChart key="category" /></Suspense>,
+    <Suspense fallback={<div>📈 Loading...</div>}><PaymentAppAnalyticsChart key="payment" /></Suspense>,
+    <Suspense fallback={<div>📈 Loading...</div>}><SavingsProgressChart key="savings" /></Suspense>,
+    <Suspense fallback={<div>📈 Loading...</div>}><SourceSpendingChart key="source" /></Suspense>,
+  ];
 
   return (
-    <div className="p-6 md:p-6 bg-white dark:bg-gray-900 min-h-screen">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-zinc-800 dark:text-white">
-          📊 Reports Dashboard
-        </h1>
-        <button
-          onClick={handleExportAllPDF}
-          className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow"
-        >
-          Export All Reports as PDF
-        </button>
-      </div>
-
-      <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2">
-        {charts.map((ChartComponent, index) => (
-          <motion.div
-            key={index}
-            ref={(el) => {
-              chartRefs.current[index] = el;
-            }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-4 pb-12 sm:p-6 sm:pb-12 relative"
+    <div className="bg-gray-100 dark:bg-gray-800 ">
+      <div className="p-6 md:p-6 max-w-4xl w-full mx-auto min-h-screen">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-3xl font-bold text-zinc-800 dark:text-white">
+            📊 Reports Dashboard
+          </h1>
+          <button
+            onClick={handleExportAllPDF}
+            className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow"
           >
-            <div className="absolute right-4 top-4 flex gap-2">
-              <button
-                onClick={() => handleExportChart(index, "png")}
-                className="text-xs px-2 py-1 bg-zinc-200 dark:bg-gray-600 text-zinc-700 dark:text-white rounded hover:bg-zinc-300 dark:hover:bg-gray-700"
-              >
-                PNG
-              </button>
-              <button
-                onClick={() => handleExportChart(index, "pdf")}
-                className="text-xs px-2 py-1 bg-zinc-200 dark:bg-gray-600 text-zinc-700 dark:text-white rounded hover:bg-zinc-300 dark:hover:bg-gray-700"
-              >
-                PDF
-              </button>
-            </div>
-            {ChartComponent}
-          </motion.div>
-        ))}
+            Export All Reports as PDF
+          </button>
+        </div>
+
+        <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2">
+          {charts.map((ChartComponent, index) => (
+            <motion.div
+              key={index}
+              ref={(el) => {
+                chartRefs.current[index] = el;
+              }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="bg-white dark:bg-gray-900 rounded-2xl shadow-md p-4 pb-12 sm:p-6 sm:pb-12 relative"
+            >
+              <div className="absolute right-4 top-4 flex gap-2">
+                <button
+                  onClick={() => handleExportChart(index, "png")}
+                  className="text-xs px-2 py-1 bg-zinc-200 dark:bg-gray-600 text-zinc-700 dark:text-white rounded hover:bg-zinc-300 dark:hover:bg-gray-700"
+                >
+                  PNG
+                </button>
+                <button
+                  onClick={() => handleExportChart(index, "pdf")}
+                  className="text-xs px-2 py-1 bg-zinc-200 dark:bg-gray-600 text-zinc-700 dark:text-white rounded hover:bg-zinc-300 dark:hover:bg-gray-700"
+                >
+                  PDF
+                </button>
+              </div>
+              {ChartComponent}
+            </motion.div>
+          ))}
+        </div>
       </div>
     </div>
   );

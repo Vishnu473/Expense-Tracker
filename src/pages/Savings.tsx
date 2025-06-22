@@ -25,9 +25,10 @@ const Savings = () => {
   if (isLoading) return <p className="text-center">Loading...</p>;
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <div className='flex flex-row justify-between items-center my-6 '>
-        <h2 className="text-2xl font-bold dark:text-white">Savings Goals</h2>
+    <div className="p-6 bg-gray-100 dark:bg-gray-800">
+      <div className='max-w-4xl mx-auto'>
+      <div className='flex flex-row justify-between items-center mb-4'>
+        <h2 className="text-3xl font-bold dark:text-white ">Savings Goals</h2>
         <button
           className="inline-flex items-center gap-2 px-3 py-1.5 border dark:border-gray-400 rounded-md text-sm dark:text-white bg-zinc-100 dark:bg-gray-600 dark:hover:bg-gray-700 hover:bg-zinc-200"
           onClick={openCreateModal}
@@ -41,7 +42,7 @@ const Savings = () => {
             100, (saving.current_amount / saving.amount) * 100).toFixed(2);
           return (
             <div key={saving._id}
-              className="bg-white dark:bg-gray-700 shadow-md rounded-lg flex flex-col gap-5 p-4">
+              className="cursor-pointer bg-white border-white hover:shadow-lg hover:shadow-gray-500 dark:border-gray-800 border hover:dark:border-gray-500 hover:border-gray-300 dark:bg-gray-700 shadow-md rounded-lg flex flex-col gap-5 p-4">
               <div>
                 <div
                   className="flex flex-col md:flex-row gap-4"
@@ -85,6 +86,7 @@ const Savings = () => {
             </div>
           );
         })}
+      </div>
       </div>
 
       {selectedSaving && (

@@ -5,7 +5,7 @@ import { transactionSchema } from "../../schemas/transactionSchema";
 import type { TransactionSchema } from "../../schemas/transactionSchema";
 import { useMutation } from '@tanstack/react-query';
 import type { TransactionType } from '../../interfaces/transaction';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { createTransactionApi } from '../../services/api/transactionApi';
 import { toast } from 'react-toastify';
 import { useQueryClient } from '@tanstack/react-query';
@@ -31,7 +31,7 @@ export const categories: categoryProps[] = [
     { category_id: 'cat004', category_name: 'Gift', category_type: 'income' },
     { category_id: 'cat005', category_name: 'Other Income', category_type: 'income' },
 
-    {category_id: '6851a2d03911117b7c684d62', category_name:'Other', category_type:'saving'},
+    { category_id: '6851a2d03911117b7c684d62', category_name: 'Other', category_type: 'saving' },
 
     { category_id: '6850501f749494f51d2ea194', category_name: 'Food', category_type: 'expense' },
     { category_id: 'cat007', category_name: 'Groceries', category_type: 'expense' },
@@ -55,7 +55,7 @@ export const sources = ['Cash', 'Bank Account', 'Other'];
 export const status = ['Pending', 'Success', 'Failed'];
 
 const CreateTransactionModal = ({ onClose, isModal }: createTransactionModalProps) => {
-    
+
     const bankAccounts = useSelector((state: RootState) => state.bank.bankAccounts);
     const payment_sources = bankAccounts.length !== 0 ? sources : sources.filter((source) => source !== 'Bank Account');
 
@@ -67,6 +67,17 @@ const CreateTransactionModal = ({ onClose, isModal }: createTransactionModalProp
         };
     }, []);
 
+    const defaultValues = useMemo(() => ({
+            amount: 0,
+            source: 'Cash' as 'Cash' | 'Other' | 'Bank Account',
+            description: '',
+            category_id: '',
+            status: 'Pending' as 'Pending' | 'Success' | 'Failed',
+            transaction_date: '',
+            source_detail: undefined,
+            payment_app: 'Other' as 'Other' | 'GPay' | 'PhonePe' | 'Paytm' | 'AmazonPay' | 'RazorPay',
+        }), []);
+
     const {
         register,
         handleSubmit,
@@ -75,16 +86,7 @@ const CreateTransactionModal = ({ onClose, isModal }: createTransactionModalProp
         formState: { errors },
     } = useForm<TransactionSchema>({
         resolver: zodResolver(transactionSchema),
-        defaultValues: {
-            amount: 0,
-            source: 'Cash',
-            description: '',
-            category_id: '',
-            status: 'Pending',
-            transaction_date: '',
-            source_detail: undefined,
-            payment_app: 'Other',
-        }
+        defaultValues: defaultValues
     });
 
     const selectedSource = watch('source');

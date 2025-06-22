@@ -10,6 +10,8 @@ import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { fetchAndSetBankAccounts } from "../utils/fetchAndSetBankAccounts";
+import { getAllCategories } from "../services/api/categoryApi";
+import { setCategories } from "../redux/slices/categorySlice";
 
 const Login = () => {
     const dispatch = useDispatch();
@@ -25,9 +27,12 @@ const Login = () => {
 
     const { mutate, isPending } = useMutation({
         mutationFn: loginUser,
-        onSuccess: async(res) => {
+        onSuccess: async (res) => {
             dispatch(setCredentials(res.data));
-             await fetchAndSetBankAccounts(dispatch);
+            await Promise.all([
+                fetchAndSetBankAccounts(dispatch),
+                getAllCategories().then(data => dispatch(setCategories(data)))
+            ]);
             toast.success("Logged in!");
             navigate("/dashboard");
         },
