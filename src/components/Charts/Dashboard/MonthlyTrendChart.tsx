@@ -4,11 +4,11 @@ import { useMonthlyTrendAnalytics } from '../../../hooks/useAnalytics';
 const MonthlyTrendChart = () => {
   const { data, isLoading, isError } = useMonthlyTrendAnalytics();
 
-  if (isLoading) return <p>Loading Monthly Trend...</p>;
-  if (isError) return <p>Failed to load trend chart.</p>;
+  if (isLoading) return <p aria-busy="true">Loading Monthly Trend...</p>;
+  if (isError) return <p aria-busy="true">Failed to load trend chart.</p>;
 
   return (
-    <div className="p-4 rounded-lg shadow flex flex-col gap-5 bg-white dark:bg-gray-900 flex-1">
+    <div role="img" aria-describedby="monthly trend chart" className="p-4 rounded-lg shadow flex flex-col gap-5 bg-white dark:bg-gray-900 flex-1">
       <h2 className="text-lg font-semibold mb-2 dark:text-white">Monthly Income vs Expense</h2>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>

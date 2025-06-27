@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FiX } from 'react-icons/fi';
 import type { Category } from '../../interfaces/category';
 
@@ -25,6 +25,8 @@ export const RenameCategoryModal: React.FC<RenameCategoryModalProps> = ({
     setType(initialCategory.type);
   }, [initialCategory]);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
   
   if (!isOpen) return null;
 
@@ -35,6 +37,7 @@ export const RenameCategoryModal: React.FC<RenameCategoryModalProps> = ({
         <input
           type="text"
           value={name}
+          ref={inputRef}
           onChange={(e) => setName(e.target.value)}
           className="w-full px-4 py-2 border rounded outline-none border-blue-600 dark:bg-gray-800 dark:text-white mb-3"
           placeholder="New Category Name"
@@ -51,11 +54,11 @@ export const RenameCategoryModal: React.FC<RenameCategoryModalProps> = ({
         <div className="mt-6 flex justify-end space-x-3">
           <button onClick={onClose} className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">Cancel</button>
           <button
-            disabled={!name || isLoading}
-            onClick={() => onRename(name, type)}
+            disabled={!name || !type || isLoading || name === initialCategory.name || type === initialCategory.type}
+            onClick={() => name && name !== initialCategory.name && onRename(name, type)}
             className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
           >
-            {isLoading ? 'Saving...' : 'Save'}
+            {isLoading ? 'Renaming...' : 'Save'}
           </button>
         </div>
         <button onClick={onClose} className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 dark:hover:text-white">

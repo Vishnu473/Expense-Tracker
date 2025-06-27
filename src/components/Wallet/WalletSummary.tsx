@@ -29,14 +29,17 @@ const SummaryCard = React.memo(({ label, value }: SummaryCardProps) => {
 
   useEffect(() => {
     if (value !== prevValue) {
-      setPrevValue(value); // triggers animation
+      setPrevValue(value);
     }
   }, [value]);
 
   return (
-    <div className="transition-colors rounded-md p-4 cursor-pointer hover:bg-gray-200 hover:dark:bg-gray-900 bg-white shadow dark:shadow-gray-500 dark:bg-gray-700">
+    <div role="button"
+      tabIndex={0}
+      aria-label={`Your ${label} is ₹${value}`}
+      className="transition-colors rounded-md p-4 cursor-pointer hover:bg-gray-200 hover:dark:bg-gray-900 bg-white shadow dark:shadow-gray-500 dark:bg-gray-700">
       <div className="text-md font-semibold dark:text-gray-100">{label}</div>
-      <div className="text-2xl font-bold dark:text-white">
+      <div aria-live="polite" className="text-2xl font-bold dark:text-white">
         ₹{" "}
         <CountUp
           start={prevValue}
@@ -50,14 +53,3 @@ const SummaryCard = React.memo(({ label, value }: SummaryCardProps) => {
     </div>
   );
 }, (prev, next) => prev.label === next.label && prev.value === next.value);
-
-// const SummaryCard = React.memo(({ label, value }: { label: string; value: number}) => (
-//   <div className={`rounded-lg p-4 bg-white shadow dark:shadow-gray-500 dark:bg-gray-800`}>
-//     <div className="text-md font-semibold dark:text-gray-100">{label}</div>
-//     <div className={`text-2xl font-bold dark:text-white`}>₹ {value.toLocaleString()}</div>
-//   </div>
-// ),
-// (prev, next) =>
-//     prev.label === next.label &&
-//     prev.value === next.value
-// );

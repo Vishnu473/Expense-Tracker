@@ -9,7 +9,7 @@ interface RenameBankModalProps {
   isLoading: boolean;
 }
 
-export const RenameBankModal: React.FC<RenameBankModalProps> = ({
+const RenameBankModal: React.FC<RenameBankModalProps> = ({
   isOpen,
   onClose,
   initialName,
@@ -26,21 +26,23 @@ export const RenameBankModal: React.FC<RenameBankModalProps> = ({
 
   useEffect(() => {
   if (isOpen) {
-    setTimeout(() => inputRef.current?.focus(), 100); // using a ref on input
+    setName(initialName);
+    setTimeout(() => inputRef.current?.focus(), 100);
   }
-}, [isOpen]);
+}, [isOpen, initialName]);
 
-  if (!isOpen) return null;
+  if (!isOpen){
+    return null;
+  };
 
   return (
     <div onClick={onClose} className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
       <div onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-gray-800 w-full max-w-md p-6 rounded-lg shadow-lg relative animate-fadeIn">
-        {/* Modal header */}
+        
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
           Rename Bank Account
         </h2>
 
-        {/* Input */}
         <input
           type="text"
           value={name}
@@ -50,7 +52,6 @@ export const RenameBankModal: React.FC<RenameBankModalProps> = ({
           placeholder="New Bank Account Name"
         />
 
-        {/* Buttons */}
         <div className="mt-6 flex justify-end space-x-3">
           <button
             onClick={onClose}
@@ -67,7 +68,6 @@ export const RenameBankModal: React.FC<RenameBankModalProps> = ({
           </button>
         </div>
 
-        {/* Close button (top-right) */}
         <button
           onClick={onClose}
           className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 dark:hover:text-white"
@@ -78,3 +78,5 @@ export const RenameBankModal: React.FC<RenameBankModalProps> = ({
     </div>
   );
 };
+
+export default RenameBankModal;

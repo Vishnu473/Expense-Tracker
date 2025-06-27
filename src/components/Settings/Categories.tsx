@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import type { Category } from "../../interfaces/category";
 import {
     useAddCategory,
@@ -22,6 +22,7 @@ const Categories = () => {
     const categories = useSelector((state: RootState) => state.category.categories);
 
     const addCategoryMutation = useAddCategory();
+    const deleteCategoryMutation = useDeleteCategory();
     const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
     const [showRenameCategoryModal, setShowRenameCategoryModal] = useState(false);
@@ -79,6 +80,17 @@ const Categories = () => {
         );
     };
 
+    const handleDeleteCategory = (cat: Category) => {
+        dispatch(deleteFromCategoryStore(cat._id));
+        deleteCategoryMutation.mutate(cat._id, {
+            onSuccess: () => toast.success('Category deleted'),
+            onError: () => {
+                dispatch(addToCategoryStore(cat));
+                toast.error('Delete failed');
+            },
+        });
+    }
+
     return (
         <div className="mt-8">
             <h2 className="text-xl font-semibold mb-2 dark:text-white">Categories</h2>
@@ -89,12 +101,12 @@ const Categories = () => {
                         className="flex justify-between items-center p-2 rounded hover:bg-gray-300 hover:dark:bg-gray-700"
                     >
                         <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-sm border border-gray-600 bg-gray-200 dark:bg-gray-700">
+                            <div className="hidden md:flex p-2 rounded-sm border border-gray-600 bg-gray-200 dark:bg-gray-700">
                                 <FaTags className="dark:text-white text-black" />
                             </div>
                             <p className="font-medium text-gray-800 dark:text-white">{cat.name}</p>
-                            <span className="text-sm text-gray-500 dark:text-gray-300 ml-2">
-                                [{cat.type}]
+                            <span className="text-sm text-gray-500 dark:text-gray-300">
+                                -{cat.type}
                             </span>
                         </div>
 
@@ -109,17 +121,7 @@ const Categories = () => {
                                 <FaRegEdit className="text-lg" />
                             </button>
                             <button
-                                onClick={() => {
-                                    dispatch(deleteFromCategoryStore(cat._id));
-                                    const deleteCategoryMutation = useDeleteCategory();
-                                    deleteCategoryMutation.mutate(cat._id, {
-                                        onSuccess: () => toast.success('Category deleted'),
-                                        onError: () => {
-                                            dispatch(addToCategoryStore(cat));
-                                            toast.error('Delete failed');
-                                        },
-                                    });
-                                }}
+                                onClick={() => handleDeleteCategory(cat)}
                                 className="dark:text-gray-300 text-gray-500 hover:underline"
                             >
                                 <FaTrash className="text-lg" />
@@ -158,4 +160,4 @@ const Categories = () => {
     )
 };
 
-export default Categories;
+export default React.memo(Categories);

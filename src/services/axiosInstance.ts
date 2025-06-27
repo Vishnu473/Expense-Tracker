@@ -19,9 +19,9 @@ export const redirectToLogin = async () => {
 
   localStorage.clear();
 
-  setTimeout(() => {
-    window.location.href = '/login';
-  }, 100);
+  // setTimeout(() => {
+  //   window.location.href = '/login';
+  // }, 100);
 };
 
 const axiosInstance = axios.create({
@@ -52,7 +52,7 @@ axiosInstance.interceptors.response.use(
       } catch (refreshErr) {
         isRefreshing = false;
         console.error("Refresh failed, redirecting...");
-        redirectToLogin();
+        await redirectToLogin();
         return Promise.reject(refreshErr);
       }
     }

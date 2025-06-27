@@ -4,11 +4,11 @@ import { useFinancialOverviewAnalytics } from '../../../hooks/useAnalytics';
 const FinancialOverviewChart = () => {
   const { data, isLoading, isError } = useFinancialOverviewAnalytics();
 
-  if (isLoading) return <p>Loading Financial Overview...</p>;
-  if (isError) return <p>Failed to load financial overview.</p>;
+  if (isLoading) return <p aria-busy="true">Loading Financial Overview...</p>;
+  if (isError) return <p aria-busy="true">Failed to load financial overview.</p>;
 
   return (
-    <div className="p-4 rounded-lg shadow flex flex-col gap-5 bg-white dark:bg-gray-900 flex-1">
+    <div role="img" aria-describedby="Financial overview chart" className="p-4 rounded-lg shadow flex flex-col gap-5 bg-white dark:bg-gray-900 flex-1">
       <h2 className="text-lg font-semibold mb-2 dark:text-white">Monthly Financial Overview</h2>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data} stackOffset="sign">

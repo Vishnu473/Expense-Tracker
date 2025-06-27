@@ -58,6 +58,9 @@ const Login = () => {
                     <input {...register("password")} type="password" className="w-full p-2 rounded text-black dark:text-white dark:bg-gray-600 outline-none border border-gray-300 dark:border-gray-500 hover:border-blue-500 dark:hover:border-cyan-300" />
                     {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
                 </div>
+                <div className="text-right text-md dark:text-gray-400">
+                    {" "}<span className="underline text-blue-600 dark:text-cyan-400"><Link to="/reset-user">Forgot Password?</Link></span>
+                </div>
                 <button type="submit" className={clsx("w-full text-white py-2 rounded", isPending ? "disabled:bg-gray-500" : "bg-blue-600 dark:bg-cyan-600")} disabled={isPending}>
                     {isPending ? "Logging in..." : "Login"}
                 </button>

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useCallback, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FiLogOut, FiMenu, FiMoon, FiSun, FiX } from "react-icons/fi";
 import clsx from "clsx";
 import { useTheme } from "../context/ThemeContext";
@@ -8,7 +8,7 @@ import type { RootState } from '../redux/store';
 import { logout } from "../redux/slices/authSlice";
 import { toast } from "react-toastify";
 import { clearBankAccounts } from "../redux/slices/bankSlice";
-import { redirectToLogin } from "../services/axiosInstance";
+import { logoutApi } from "../services/api/authApi";
 
 const navLinks = [
   { name: "Dashboard", path: "/dashboard" },
@@ -22,20 +22,35 @@ const Header = () => {
   const [open, setOpen] = useState(false);
   const location = useLocation();
 
-  const toggleMenu = () => setOpen(!open);
+  const toggleMenu = useCallback(() => setOpen(!open),[open]);
   const { theme, toggleTheme } = useTheme();
 
   const user = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = useCallback(async () => {
+    try {
+      await logoutApi();
+      dispatch(clearBankAccounts());
+      dispatch(logout());
+      toast.info("Logged out!");
+      navigate('/login');
+    } catch (error) {
+      console.error("Logout failed", error);
+      toast.error("Logout failed. Try again.");
+    }
+  },[dispatch,navigate]);
+
 
   return (
     <header className="fixed top-0 left-0 w-full backdrop-blur-md backdrop-filter bg-transparent border-b border-gray-400 text-black dark:text-white shadow-md z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
-        <div className="text-lg md:text-2xl font-bold text-blue-600 dark:text-cyan-400">
+        <h1 className="text-lg md:text-2xl font-bold text-blue-600 dark:text-cyan-400">
           <Link to="/">💰 E Tracker</Link>
-        </div>
+        </h1>
 
-        <nav className="hidden md:flex space-x-6">
+        <nav className="hidden md:flex space-x-6"  aria-label="Main Navigation">
           {navLinks.map((link) => (
             <Link
               key={link.name}
@@ -48,28 +63,24 @@ const Header = () => {
               {link.name}
             </Link>
           ))}
-          <button onClick={toggleTheme} className="text-xl text-slate-900 dark:text-white">
+          <button aria-label="Toggle dark mode" onClick={toggleTheme} className="text-xl text-slate-900 dark:text-white">
             {theme === "light" ? <FiMoon /> : <FiSun />}
           </button>
           {
             user ?
-              <button onClick={() => {
-                dispatch(clearBankAccounts());
-                dispatch(logout());
-                toast.info("Logged out!");
-              }}
+              <button aria-label="Logout" onClick={handleLogout}
                 className="flex justify-center items-center gap-1 text-red-500 hover:underline">
                 <FiLogOut />Logout</button> : null
           }
         </nav>
 
-        <button onClick={toggleMenu} className="md:hidden text-2xl">
+        <button aria-label={open ? "Close menu" : "Open menu"} onClick={toggleMenu} className="md:hidden text-2xl">
           {open ? <FiX /> : <FiMenu />}
         </button>
       </div>
 
       {open && (
-        <nav className="md:hidden bg-white border-t-cyan-500 border-t dark:bg-gray-800 shadow-md px-4 py-3 space-y-2">
+        <nav  aria-label="Mobile Navigation" className="md:hidden bg-white border-t-cyan-500 border-t dark:bg-gray-800 shadow-md px-4 py-3 space-y-2">
           {navLinks.map((link) => (
             <Link
               key={link.name}
@@ -83,22 +94,14 @@ const Header = () => {
               {link.name}
             </Link>
           ))}
-          <button onClick={toggleTheme} className="text-xl text-slate-900 dark:text-white">
+          <button aria-label="Toggle dark mode" onClick={toggleTheme} className="text-xl text-slate-900 dark:text-white">
             {theme === "light" ? <FiMoon /> : <FiSun />}
           </button>
           {
             user ?
               <button
-                onClick={async () => {
-                  try {
-                    await redirectToLogin();          
-                    dispatch(logout());              
-                    toast.info("Logged out!");
-                  } catch (err) {
-                    console.error("Logout failed", err);
-                    toast.error("Something went wrong while logging out.");
-                  }
-                }}
+                aria-label="Logout"
+                onClick={handleLogout}
                 className="flex justify-center items-center gap-1 text-red-500 hover:underline">
                 <FiLogOut />Logout</button> : null
           }
