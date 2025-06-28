@@ -94,13 +94,16 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
   return (
     <div
       id="modal-wrapper"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
       className="flex justify-center items-center fixed inset-0 bg-black bg-opacity-80 z-50 p-4"
       onClick={handleWrapperClick}
     >
       <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-xl overflow-auto">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-white text-xl">Edit Goal</h2>
-          <button onClick={onClose} className="text-black dark:text-white text-2xl">
+        <div aria-labelledby="update saving modal-title" className="flex justify-between items-center mb-4">
+          <h2 id="update saving modal-title" className="text-white text-xl">Edit Goal</h2>
+          <button role="button" aria-label="close modal button" onClick={onClose} className="text-black dark:text-white text-2xl">
             <FiX />
           </button>
         </div>
@@ -112,7 +115,6 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
               <img className='h-40 rounded object-cover'
                 loading="lazy"
                 src={saving?.pic ?? 'https://www.rd.com/wp-content/uploads/2020/04/hanauma-bay-on-the-island-of-o-ahu-in-the-united-states-of-america-e1643060191903.jpg'} alt={saving?.purpose} />
-
             </div>
             <div className="flex flex-col justify-center space-y-2 flex-1">
               <p className='dark:text-gray-300 text-gray-800 text-sm'>new image:</p>
@@ -143,50 +145,50 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
             </div>
           </div>
           <div>
-            <label className="block text-white mb-1">Purpose:</label>
-            <input
+            <label htmlFor='purpose' className="block text-white mb-1">Purpose:</label>
+            <input id='purpose' aria-invalid={!!errors.purpose} aria-describedby={errors.purpose ? "purpose-error" : undefined}
               type="text"
               {...register('purpose')}
               className="bg-gray-700 text-white p-2 rounded w-full"
               placeholder="Enter new purpose"
             />
             {errors.purpose && (
-              <p className="text-red-400 text-sm">{errors.purpose.message}
+              <p id='purpose-error' className="text-red-400 text-sm">{errors.purpose.message}
               </p>
             )}
           </div>
           <div>
-            <label className="block text-white mb-1">Enter amount:</label>
-            <input
-              type="number"
+            <label htmlFor='addAmount' className="block text-white mb-1">Enter amount:</label>
+            <input id='addAmount'
+              type="number" aria-invalid={!!errors.addAmount} aria-describedby={errors.addAmount ? "addAmount-error" : undefined}
               {...register('addAmount', { valueAsNumber: true })}
               className="bg-gray-700 text-white p-2 rounded w-full"
               placeholder="Enter amount"
             />
             {errors.addAmount && (
-              <p className="text-red-400 text-sm">{errors.addAmount.message}
+              <p id='addAmount-error' className="text-red-400 text-sm">{errors.addAmount.message}
               </p>
             )}
           </div>
           <div>
-            <label className="block text-white mb-1">Transaction Date:</label>
-            <input
-              type="date"
+            <label htmlFor='transaction_date' className="block text-white mb-1">Transaction Date:</label>
+            <input id='transaction_date'
+              type="date" aria-invalid={!!errors.transaction_date} aria-describedby={errors.transaction_date ? "transaction_date-error" : undefined}
               {...register('transaction_date')}
               className="bg-gray-700 text-white p-2 rounded w-full"
               placeholder="Enter transaction date"
             />
             {errors.transaction_date && (
-              <p className="text-red-400 text-sm">{errors.transaction_date.message}
+              <p id='transaction_date-error' className="text-red-400 text-sm">{errors.transaction_date.message}
               </p>
             )}
           </div>
           <input
-            type="submit"
+            type="submit" role='button' aria-label={isPending ? 'Updating...' : 'Update Goal'} aria-busy={isPending}
             value={isPending ? 'Updating...' : 'Update Goal'}
             disabled={Boolean(isPending || (newPreviewImageUrl && !imageUploaded))}
             className={`px-4 py-2 rounded cursor-pointer transition w-full
-    ${isPending || (newPreviewImageUrl && !imageUploaded)
+                ${isPending || (newPreviewImageUrl && !imageUploaded)
                 ? 'bg-gray-500 cursor-not-allowed'
                 : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
           />
@@ -196,7 +198,6 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
               Image is uploading...
             </p>
           )}
-
         </form>
       </div>
     </div>

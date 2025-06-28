@@ -3,7 +3,7 @@ import { createSavingSchema, type CreateSavingSchema } from "../../schemas/savin
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Saving } from "../../interfaces/saving";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { createSaving, uploadImage } from "../../services/api/savingApi";
@@ -22,7 +22,10 @@ const CreateSavingModal = ({ isCreateModal, closeModal }: { isCreateModal: boole
     const [imageUploaded, setImageUploaded] = useState<Boolean>(false);
     const [newPreviewImageUrl, setNewPreviewImageUrl] = useState<string>('');
     const [newImageUrl, setNewImageUrl] = useState<string>('');
-    const payment_sources = bankAccounts.length !== 0 ? sources : sources.filter((src) => src !== "Bank Account")
+
+    const payment_sources = useMemo(() => (
+        bankAccounts.length !== 0 ? sources : sources.filter((src) => src !== "Bank Account")
+    ), [bankAccounts]);
 
     useEffect(() => {
         return () => {
@@ -133,13 +136,16 @@ const CreateSavingModal = ({ isCreateModal, closeModal }: { isCreateModal: boole
 
     return (
         <div id="modal-wrapper"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-title"
             onClick={handleWrapperClick}
             className="flex justify-center items-center fixed inset-0 z-50 bg-black bg-opacity-80 p-4">
             <div className="max-w-2xl w-full dark:bg-gray-800 bg-gray-100 p-3 md:p-6 shadow-md rounded-sm md:rounded-lg overflow-y-auto max-h-[90vh]"
                 onClick={(e) => e.stopPropagation()}>
-                <div className="flex flex-row justify-between items-center mb-4">
-                    <h2 className="text-black font-medium md:font-semibold dark:text-white text-lg md:text-xl">Create Saving</h2>
-                    <button onClick={handleClose} className="font-medium text-black dark:text-white text-lg md:text-xl">
+                <div aria-labelledby="create saving modal-title" className="flex flex-row justify-between items-center mb-4">
+                    <h2 id="create saving modal-title" className="text-black font-medium md:font-semibold dark:text-white text-lg md:text-xl">Create Saving</h2>
+                    <button role="button" aria-label="close modal button" onClick={handleClose} className="font-medium text-black dark:text-white text-lg md:text-xl">
                         <FiX />
                     </button>
                 </div>
@@ -176,21 +182,22 @@ const CreateSavingModal = ({ isCreateModal, closeModal }: { isCreateModal: boole
                         )}
                     </div>
                     <div>
-                        <label className="text-black dark:text-white block mb-1">Purpose:</label>
-                        <input type="text"
+                        <label htmlFor="purpose" className="text-black dark:text-white block mb-1">Purpose:</label>
+                        <input type="text" id="purpose"
+                            aria-invalid={!!errors.purpose} aria-describedby={errors.purpose ? "purpose-error" : undefined}
                             {...register('purpose')}
                             className={`bg-gray-300 dark:bg-gray-700 text-black dark:text-white p-2 rounded w-full focus:outline-none focus:ring-1 
                                   ${errors.purpose ? 'border border-red-500 focus:ring-red-500'
                                     : 'focus:ring-blue-500'}`}
                             placeholder="Enter the Saving Purpose" />
                         {errors.purpose && (
-                            <p className="text-red-400 text-sm">{errors.purpose.message}
+                            <p id="purpose-error" className="text-red-400 text-sm">{errors.purpose.message}
                             </p>
                         )}
                     </div>
                     <div className="mb-4">
-                        <label className="text-black dark:text-white mb-1 block md:inline md:mr-5">Is this a new saving goal?</label>
-                        <input
+                        <label htmlFor="isNew" className="text-black dark:text-white mb-1 block md:inline md:mr-5">Is this a new saving goal?</label>
+                        <input id="isNew"
                             type="checkbox"
                             {...register('isNew')}
                             className="mr-2 accent-blue-500"
@@ -199,28 +206,29 @@ const CreateSavingModal = ({ isCreateModal, closeModal }: { isCreateModal: boole
                     </div>
                     <div className="flex gap-5 md:flex-row flex-col">
                         <div className="flex-1">
-                            <label className="text-black dark:text-white block mb-1">Target Amount:</label>
-                            <input type="number"
+                            <label htmlFor="amount" className="text-black dark:text-white block mb-1">Target Amount:</label>
+                            <input type="number" id="amount"
+                                aria-invalid={!!errors.amount} aria-describedby={errors.amount ? "amount-error" : undefined}
                                 {...register('amount', { valueAsNumber: true })}
                                 className={`bg-gray-300 dark:bg-gray-700 text-black dark:text-white p-2 rounded w-full focus:outline-none focus:ring-1 
                                   ${errors.amount ? 'border border-red-500 focus:ring-red-500' : 'focus:ring-blue-500'}`}
                                 placeholder="Enter the Target amount" />
                             {errors.amount && (
-                                <p className="text-red-400 text-sm">{errors.amount.message}
+                                <p id="amount-error" className="text-red-400 text-sm">{errors.amount.message}
                                 </p>
                             )}
                         </div>
                     </div>
                     <div className="flex gap-5 md:flex-row flex-col">
                         <div className="flex-1">
-                            <label className="text-black dark:text-white block mb-1">Expected Date:</label>
-                            <input type="date"
+                            <label htmlFor="expected_at" className="text-black dark:text-white block mb-1">Expected Date:</label>
+                            <input type="date" id="expected_at" aria-invalid={!!errors.expected_at} aria-describedby={errors.expected_at ? "expected_at-error" : undefined}
                                 {...register('expected_at')}
                                 className={`bg-gray-300 dark:bg-gray-700 text-black dark:text-white p-2 rounded w-full focus:outline-none focus:ring-1 
                                   ${errors.expected_at ? 'border border-red-500 focus:ring-red-500' : 'focus:ring-blue-500'}`}
                                 placeholder="Enter the Target amount" />
                             {errors.expected_at && (
-                                <p className="text-red-400 text-sm">{errors.expected_at.message}
+                                <p id="expected_at-error" className="text-red-400 text-sm">{errors.expected_at.message}
                                 </p>
                             )}
                         </div>
@@ -228,8 +236,9 @@ const CreateSavingModal = ({ isCreateModal, closeModal }: { isCreateModal: boole
 
                     </div>
                     <div className="flex-1">
-                        <label className="text-black dark:text-white block mb-1">Source:</label>
-                        <select {...register('source')}
+                        <label htmlFor="source" className="text-black dark:text-white block mb-1">Source:</label>
+                        <select {...register('source')} id="source"
+                            aria-invalid={!!errors.source} aria-describedby={errors.source ? "source-error" : undefined}
                             className={`bg-gray-300 dark:bg-gray-700 text-black dark:text-white p-2 rounded w-full focus:outline-none focus:ring-1 
                                   ${errors.source ? 'border border-red-500 focus:ring-red-500' : 'focus:ring-blue-500'}`}>
                             <option value="">Select the Source of investment</option>
@@ -238,15 +247,16 @@ const CreateSavingModal = ({ isCreateModal, closeModal }: { isCreateModal: boole
                             ))}
                         </select>
                         {errors.source && (
-                            <p className="text-red-400 text-sm">{errors.source.message}</p>
+                            <p id="source-error" className="text-red-400 text-sm">{errors.source.message}</p>
                         )}
                     </div>
                     {
                         selectedSource === "Bank Account" &&
                         (<div className="flex md:flex-row flex-col gap-5">
                             <div className="flex-1">
-                                <label className="text-black dark:text-white block mb-1">Bank Account:</label>
-                                <select {...register('source_detail')}
+                                <label htmlFor="source_detail" className="text-black dark:text-white block mb-1">Bank Account:</label>
+                                <select {...register('source_detail')} id="source_detail"
+                                    aria-invalid={!!errors.source_detail} aria-describedby={errors.source_detail ? "source_detail-error" : undefined}
                                     className={`bg-gray-300 dark:bg-gray-700 text-black dark:text-white p-2 rounded w-full focus:outline-none focus:ring-1 
                                   ${errors.source_detail ? 'border border-red-500 focus:ring-red-500' : 'focus:ring-blue-500'}`}>
                                     <option value="">Select the bank used</option>
@@ -255,12 +265,13 @@ const CreateSavingModal = ({ isCreateModal, closeModal }: { isCreateModal: boole
                                     ))}
                                 </select>
                                 {errors.source_detail && (
-                                    <p className="text-red-400 text-sm">{errors.source_detail.message}</p>
+                                    <p id="source_detail-error" className="text-red-400 text-sm">{errors.source_detail.message}</p>
                                 )}
                             </div>
                             <div className="flex-1">
-                                <label className="text-black dark:text-white block mb-1">Payment App(Optional):</label>
-                                <select {...register('payment_app')}
+                                <label htmlFor="payment_app" className="text-black dark:text-white block mb-1">Payment App(Optional):</label>
+                                <select {...register('payment_app')} id="payment_app"
+                                    aria-invalid={!!errors.payment_app} aria-describedby={errors.payment_app ? "payment_app-error" : undefined}
                                     className={`bg-gray-300 dark:bg-gray-700 text-black dark:text-white p-2 rounded w-full focus:outline-none focus:ring-1 
                                   ${errors.payment_app ? 'border border-red-500 focus:ring-red-500' : 'focus:ring-blue-500'}`}>
                                     <option value="">Select the Source of investment</option>
@@ -269,14 +280,14 @@ const CreateSavingModal = ({ isCreateModal, closeModal }: { isCreateModal: boole
                                     ))}
                                 </select>
                                 {errors.payment_app && (
-                                    <p className="text-red-400 text-sm">{errors.payment_app.message}</p>
+                                    <p id="payment_app-error" className="text-red-400 text-sm">{errors.payment_app.message}</p>
                                 )}
                             </div>
                         </div>
                         )
                     }
                     <div className="pt-4 flex justify-end">
-                        <button
+                        <button aria-label="Create saving" role="button"
                             type="submit"
                             className={`bg-blue-600 hover:bg-blue-700 px-4 py-2 text-white rounded-lg 
                                 ${false ? 'opacity-50 cursor-not-allowed' : ''}`}>

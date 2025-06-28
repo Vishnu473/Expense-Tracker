@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import type { Category } from "../../interfaces/category";
 import {
     useAddCategory,
@@ -30,31 +30,30 @@ const Categories = () => {
     console.log("Categories loaded");
     console.log("Redux categories:", categories);
 
-    const handleAddCategory = (name: string, type: 'income' | 'expense' | 'saving') => {
-        const newCat = { name: name, type: type };
+    const handleAddCategory = useCallback((name: string, type: 'income' | 'expense' | 'saving') => {
 
-        console.log(newCat);
+        addCategoryMutation.mutate(
+            { name, type },
+            {
+                onSuccess: (created: Category) => {
+                    const alreadyExists = categories.some(cat => cat._id === created._id);
+                    if (!alreadyExists) {
+                        dispatch(addToCategoryStore(created));
+                    }
 
-        dispatch(addToCategoryStore({ _id: 'temp-id', name, type })); // optimistic
-
-        addCategoryMutation.mutate(newCat, {
-            onSuccess: (response) => {
-                const created = response.data as Category;
-                dispatch(deleteFromCategoryStore('temp-id'));
-                dispatch(addToCategoryStore(created));
-                toast.success('Category added');
-                setShowAddCategoryModal(false);
-            },
-            onError: () => {
-                dispatch(deleteFromCategoryStore('temp-id'));
-                toast.error('Failed to add category');
+                    toast.success('Category added');
+                    setShowAddCategoryModal(false);
+                },
+                onError: () => {
+                    toast.error('Failed to add category');
+                }
             }
-        });
-    };
+        );
+    }, [addCategoryMutation, categories, dispatch]);
 
     const renameCategoryMutation = useUpdateCategory();
 
-    const handleRenameCategory = (newName: string, newType: 'income' | 'expense' | 'saving') => {
+    const handleRenameCategory = useCallback((newName: string, newType: 'income' | 'expense' | 'saving') => {
         if (!selectedCategory) return;
 
         const updated = {
@@ -78,9 +77,9 @@ const Categories = () => {
                 }
             }
         );
-    };
+    }, [renameCategoryMutation, categories, dispatch]);
 
-    const handleDeleteCategory = (cat: Category) => {
+    const handleDeleteCategory = useCallback((cat: Category) => {
         dispatch(deleteFromCategoryStore(cat._id));
         deleteCategoryMutation.mutate(cat._id, {
             onSuccess: () => toast.success('Category deleted'),
@@ -89,14 +88,21 @@ const Categories = () => {
                 toast.error('Delete failed');
             },
         });
-    }
+    }, [dispatch, deleteCategoryMutation]);
+
+    const openRenameModal = useCallback((cat: Category) => {
+        setSelectedCategory(cat);
+        setShowRenameCategoryModal(true);
+    }, []);
+
 
     return (
-        <div className="mt-8">
-            <h2 className="text-xl font-semibold mb-2 dark:text-white">Categories</h2>
+        <div className="mt-8" aria-busy={addCategoryMutation.isPending || renameCategoryMutation.isPending}>
+            <h2 aria-label="Categories title" className="text-xl font-semibold mb-2 dark:text-white">Categories</h2>
             <ul className="space-y-2">
-                {categories?.map((cat) => (
-                    <li
+                {categories.length === 0 ? (<p className="text-gray-500 dark:text-gray-300 italic">No categories added yet.</p>
+                ) : categories?.map((cat: Category) => (
+                    <li aria-label={`${cat.name} - ${cat.type}`}
                         key={cat._id}
                         className="flex justify-between items-center p-2 rounded hover:bg-gray-300 hover:dark:bg-gray-700"
                     >
@@ -106,21 +112,18 @@ const Categories = () => {
                             </div>
                             <p className="font-medium text-gray-800 dark:text-white">{cat.name}</p>
                             <span className="text-sm text-gray-500 dark:text-gray-300">
-                                -{cat.type}
+                                -{cat.type.charAt(0).toUpperCase() + cat.type.slice(1)}
                             </span>
                         </div>
 
                         <div className="space-x-2">
-                            <button
-                                onClick={() => {
-                                    setSelectedCategory(cat);
-                                    setShowRenameCategoryModal(true);
-                                }}
+                            <button role="button"
+                                onClick={() => openRenameModal(cat)}
                                 className="dark:text-gray-300 text-gray-500 hover:underline"
                             >
                                 <FaRegEdit className="text-lg" />
                             </button>
-                            <button
+                            <button role="button" aria-label="delete category"
                                 onClick={() => handleDeleteCategory(cat)}
                                 className="dark:text-gray-300 text-gray-500 hover:underline"
                             >
@@ -138,24 +141,22 @@ const Categories = () => {
                 + Add Category
             </button>
 
-            {showAddCategoryModal && (
-                <AddCategoryModal
-                    isOpen={showAddCategoryModal}
-                    onClose={() => setShowAddCategoryModal(false)}
-                    handleAddCategory={handleAddCategory}
-                    isLoading={addCategoryMutation.isPending}
-                />
-            )}
+            <AddCategoryModal
+                isOpen={showAddCategoryModal}
+                onClose={() => setShowAddCategoryModal(false)}
+                handleAddCategory={handleAddCategory}
+                isLoading={addCategoryMutation.isPending}
+            />
 
-            {selectedCategory && (
-                <RenameCategoryModal
-                    isOpen={showRenameCategoryModal}
-                    onClose={() => setShowRenameCategoryModal(false)}
-                    initialCategory={selectedCategory}
-                    onRename={handleRenameCategory}
-                    isLoading={renameCategoryMutation.isPending}
-                />
-            )}
+
+            <RenameCategoryModal
+                key={selectedCategory?._id}
+                isOpen={showRenameCategoryModal}
+                onClose={() => setShowRenameCategoryModal(false)}
+                initialCategory={selectedCategory!}
+                onRename={handleRenameCategory}
+                isLoading={renameCategoryMutation.isPending}
+            />
         </div>
     )
 };

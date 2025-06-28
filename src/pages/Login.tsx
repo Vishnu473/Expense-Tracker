@@ -27,6 +27,10 @@ const Login = () => {
 
     const { mutate, isPending } = useMutation({
         mutationFn: loginUser,
+        retry: (failureCount, error:any) => {
+            return error?.response == null && failureCount < 1;
+        },
+        retryDelay: attempt => 1000 * 2 ** attempt,
         onSuccess: async (res) => {
             dispatch(setCredentials(res.data));
             await Promise.all([
@@ -49,23 +53,25 @@ const Login = () => {
             >
                 <h2 className="text-2xl font-bold text-center text-blue-500 dark:text-cyan-400">Login</h2>
                 <div>
-                    <label className="dark:text-cyan-300">Email</label>
-                    <input {...register("email")} className="w-full p-2 rounded text-black dark:text-white dark:bg-gray-600 outline-none border border-gray-300 dark:border-gray-500 hover:border-blue-500 dark:hover:border-cyan-300" />
-                    {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+                    <label htmlFor="email" className="dark:text-cyan-300">Email</label>
+                    <input id="email" aria-invalid={!!errors.email} aria-describedby={errors.email ? "email-error" : undefined}
+                        {...register("email")} className="w-full p-2 rounded text-black dark:text-white dark:bg-gray-600 outline-none border border-gray-300 dark:border-gray-500 hover:border-blue-500 dark:hover:border-cyan-300" />
+                    {errors.email && <p id="email-error" className="text-red-500 text-sm">{errors.email.message}</p>}
                 </div>
                 <div>
-                    <label className="dark:text-cyan-300">Password</label>
-                    <input {...register("password")} type="password" className="w-full p-2 rounded text-black dark:text-white dark:bg-gray-600 outline-none border border-gray-300 dark:border-gray-500 hover:border-blue-500 dark:hover:border-cyan-300" />
-                    {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+                    <label htmlFor="password" className="dark:text-cyan-300">Password</label>
+                    <input id="password" aria-invalid={!!errors.password} aria-describedby={errors.password ? "password-error" : undefined}
+                        {...register("password")} type="password" className="w-full p-2 rounded text-black dark:text-white dark:bg-gray-600 outline-none border border-gray-300 dark:border-gray-500 hover:border-blue-500 dark:hover:border-cyan-300" />
+                    {errors.password && <p id="password-error" className="text-red-500 text-sm">{errors.password.message}</p>}
                 </div>
                 <div className="text-right text-md dark:text-gray-400">
                     {" "}<span className="underline text-blue-600 dark:text-cyan-400"><Link to="/reset-user">Forgot Password?</Link></span>
                 </div>
-                <button type="submit" className={clsx("w-full text-white py-2 rounded", isPending ? "disabled:bg-gray-500" : "bg-blue-600 dark:bg-cyan-600")} disabled={isPending}>
+                <button type="submit" aria-busy={isPending} className={clsx("w-full text-white py-2 rounded", isPending ? "disabled:bg-gray-500 disabled:cursor-not-allowed" : "bg-blue-600 dark:bg-cyan-600")} disabled={isPending}>
                     {isPending ? "Logging in..." : "Login"}
                 </button>
-                <div className="text-center text-md dark:text-gray-400">
-                    Don't have an account?{" "}<span className="underline text-blue-600 dark:text-cyan-400"><Link to="/register">SignUp</Link></span> here
+                <div aria-label="Don't have an account?" className="text-center text-md dark:text-gray-400">
+                    Don't have an account?{" "}<span aria-describedby="Register here" className="underline text-blue-600 dark:text-cyan-400"><Link to="/register">SignUp</Link></span> here
                 </div>
             </form>
         </div>

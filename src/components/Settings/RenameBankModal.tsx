@@ -36,20 +36,21 @@ const RenameBankModal: React.FC<RenameBankModalProps> = ({
   };
 
   return (
-    <div onClick={onClose} className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
+    <div onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="rename-bank-title"
+     className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
       <div onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-gray-800 w-full max-w-md p-6 rounded-lg shadow-lg relative animate-fadeIn">
         
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+        <h2 id="rename-bank-title" className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
           Rename Bank Account
         </h2>
 
         <input
-          type="text"
+          type="text" aria-label='rename bank account' id='renameBankAccount'
           value={name}
           ref={inputRef}
           onChange={(e) => setName(e.target.value)}
           className="w-full px-4 py-2 border rounded outline-none border-blue-600 dark:bg-gray-800 dark:text-white"
-          placeholder="New Bank Account Name"
+          placeholder="Rename Bank Account Name"
         />
 
         <div className="mt-6 flex justify-end space-x-3">
@@ -59,10 +60,10 @@ const RenameBankModal: React.FC<RenameBankModalProps> = ({
           >
             Cancel
           </button>
-          <button
+          <button aria-busy={isLoading}
             onClick={() => name && name !== initialName && onRename(name)}
             disabled={isLoading || !name || name === initialName}
-            className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
+            className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-none"
           >
             {isLoading ? 'Renaming...' : 'Save'}
           </button>

@@ -16,8 +16,8 @@ const ProgressBar = React.memo(({ targetPercent }: ProgressBarProps) => {
   }, [targetPercent]);
 
   return (
-    <div className="w-full h-1.5 bg-zinc-200 dark:bg-gray-400 rounded-full overflow-hidden mb-1">
-      <div
+    <div role='progressbar' className="w-full h-1.5 bg-zinc-200 dark:bg-gray-400 rounded-full overflow-hidden mb-1">
+      <div 
         className="h-full bg-blue-600 dark:bg-gray-900 rounded-md transition-all duration-700 ease-out"
         style={{ width: `${width}%` }}
       />

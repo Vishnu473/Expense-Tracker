@@ -13,7 +13,7 @@ const Reports = lazy(() => import("../pages/Reports"));
 const Settings = lazy(() => import("../pages/Settings"));
 const Login = lazy(() => import("../pages/Login"));
 const Register = lazy(() => import("../pages/Register"));
-const ResetFlow = lazy(() => import("../pages/resetUserFlow"));
+const ResetFlow = lazy(() => import("../pages/ResetUserFlow"));
 
 const AppRoutes = () => {
   return (
@@ -29,11 +29,11 @@ const AppRoutes = () => {
           </PrivateRoute>
         }
       >
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/transactions" element={<Transactions />} />
-        <Route path="/savings" element={<Savings />} />
-        <Route path="/reports" element={<Reports />} />
-        <Route path="/settings" element={<Settings />} />
+        <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+        <Route path="/transactions" element={<PrivateRoute><Transactions /></PrivateRoute>} />
+        <Route path="/savings" element={<PrivateRoute><Savings /></PrivateRoute>} />
+        <Route path="/reports" element={<PrivateRoute><Reports /></PrivateRoute>} />
+        <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

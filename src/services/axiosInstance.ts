@@ -1,8 +1,10 @@
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 let isRefreshing = false;
 let isRedirecting = false; // NEW
 
 export const redirectToLogin = async () => {
+  const navigate = useNavigate();
   if (isRedirecting) return;
   isRedirecting = true;
 
@@ -18,6 +20,8 @@ export const redirectToLogin = async () => {
   }
 
   localStorage.clear();
+
+  navigate("/login");
 
   // setTimeout(() => {
   //   window.location.href = '/login';

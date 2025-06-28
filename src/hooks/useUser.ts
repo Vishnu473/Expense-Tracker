@@ -5,8 +5,12 @@ export const useUser = () => useQuery({ queryKey: ['user'], queryFn: getUser });
 
 export const useUpdateUser = () => {
   const queryClient = useQueryClient();
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: updateUser,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['user'] }),
   });
+  return {
+    ...mutation,
+    isPending: mutation.status === 'pending',
+  };
 };
