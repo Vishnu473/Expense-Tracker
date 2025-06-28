@@ -19,7 +19,7 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
   const queryClient = useQueryClient();
   const { register, handleSubmit, reset, formState: { errors }, } = useForm({
     defaultValues: {
-      purpose: saving.purpose,
+      purpose: '',
       addAmount: 0,
       transaction_date: ''
     },

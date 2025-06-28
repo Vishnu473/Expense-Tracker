@@ -148,15 +148,17 @@ const Categories = () => {
                 isLoading={addCategoryMutation.isPending}
             />
 
-
+        {
+            selectedCategory && 
             <RenameCategoryModal
                 key={selectedCategory?._id}
                 isOpen={showRenameCategoryModal}
                 onClose={() => setShowRenameCategoryModal(false)}
-                initialCategory={selectedCategory!}
+                initialCategory={selectedCategory}
                 onRename={handleRenameCategory}
                 isLoading={renameCategoryMutation.isPending}
             />
+        }
         </div>
     )
 };

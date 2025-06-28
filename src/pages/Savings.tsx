@@ -42,7 +42,7 @@ const Savings = () => {
               100, (saving.current_amount / saving.amount) * 100).toFixed(2);
             return (
               <div key={saving._id}
-                className="cursor-pointer bg-white border-white hover:shadow-lg hover:shadow-gray-500 dark:border-gray-800 border hover:dark:border-gray-500 hover:border-gray-300 dark:bg-gray-700 shadow-md rounded-lg flex flex-col gap-5 p-4">
+                className="cursor-pointer bg-white border-white hover:shadow-lg dark:border-gray-800 border hover:dark:border-gray-500 hover:border-gray-300 dark:bg-gray-700 shadow-md rounded-lg flex flex-col gap-5 p-4">
                 <div>
                   <div role='saving-card'
                     className="flex flex-col md:flex-row gap-4"
@@ -89,9 +89,13 @@ const Savings = () => {
         </div>
       </div>
 
-      <Suspense fallback={<div>Loading Edit Modal...</div>}>
-        <SavingModal saving={selectedSaving!} onClose={closeEditModal} />
-      </Suspense>
+      {
+        selectedSaving && (
+          <Suspense fallback={<div>Loading Edit Modal...</div>}>
+            <SavingModal saving={selectedSaving} onClose={closeEditModal} />
+          </Suspense>
+        )
+      }
 
       <Suspense fallback={<div>Loading Create Modal...</div>}>
         <CreateSavingModal isCreateModal={isCreateModal} closeModal={closeCreateModal} />
