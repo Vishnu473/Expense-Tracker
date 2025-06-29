@@ -54,7 +54,19 @@ function App() {
           <AppRoutes />
         </Suspense>
 
-        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={true} />
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={true}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          role="alert"
+          aria-live="assertive"
+        />
       </BrowserRouter>
     </>
   )

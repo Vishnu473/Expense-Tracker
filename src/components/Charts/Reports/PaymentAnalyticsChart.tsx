@@ -7,6 +7,8 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { usePaymentAppAnalytics } from '../../../hooks/useAnalytics';
+import ChartSkeleton from '../../Skeletons/Charts/ChartSkeleton';
+import ErrorMessageFallBackUI from '../../Skeletons/Charts/ErrorMessageFallBackUI';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#845EC2', '#D65DB1'];
 
@@ -18,10 +20,10 @@ export type PaymentAppAnalytics = {
 const PaymentAppAnalyticsChart = () => {
   const { data, isLoading, isError } = usePaymentAppAnalytics();
 
-  if (isLoading) return <p>Loading payment app analytics...</p>;
-  if (isError || !data) return <p>Failed to load chart</p>;
+  if (isLoading) return <ChartSkeleton type='pie'/>;
+  if (isError || !data || data.length === 0) return <ErrorMessageFallBackUI message='Failed to load PaymentApp analytics chart' />;
 
-  // 🔁 Normalize API response
+  // Normalize API response
   const parsedData: PaymentAppAnalytics[] = data.map(
     (item: { app: string; count: number }) => ({
       payment_app: item.app,

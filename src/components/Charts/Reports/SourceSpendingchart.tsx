@@ -8,6 +8,8 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { useSourceSpendingAnalytics } from '../../../hooks/useAnalytics';
+import ChartSkeleton from '../../Skeletons/Charts/ChartSkeleton';
+import ErrorMessageFallBackUI from '../../Skeletons/Charts/ErrorMessageFallBackUI';
 
 type SourceSpending = {
   source: string;
@@ -17,8 +19,8 @@ type SourceSpending = {
 const SourceSpendingChart = () => {
   const { data, isLoading, isError } = useSourceSpendingAnalytics();
 
-  if (isLoading) return <p>Loading source spending chart...</p>;
-  if (isError || !data) return <p>Failed to load source spending chart</p>;
+  if (isLoading) return <ChartSkeleton type='bar' />;
+  if (isError || !data || data.length === 0) return <ErrorMessageFallBackUI message='Failed to load source spending chart' />;
 
   // Format data with fallback for empty source name
   const formattedData: SourceSpending[] = data.map((item: any) => ({
@@ -35,7 +37,7 @@ const SourceSpendingChart = () => {
         <BarChart data={formattedData}>
           <XAxis dataKey="source" />
           <YAxis />
-          
+
           <Tooltip formatter={(val: number) => `₹${val.toLocaleString()}`} />
           <Legend />
           <Bar dataKey="total" fill="#8884d8" name="Expense (₹)" />

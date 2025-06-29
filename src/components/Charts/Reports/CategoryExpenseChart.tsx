@@ -7,6 +7,8 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { useCategoryExpenseAnalytics } from '../../../hooks/useAnalytics';
+import ChartSkeleton from '../../Skeletons/Charts/ChartSkeleton';
+import ErrorMessageFallBackUI from '../../Skeletons/Charts/ErrorMessageFallBackUI';
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#00C49F', '#FFBB28'];
 
@@ -18,8 +20,8 @@ export interface CategoryExpense {
 const CategoryExpenseChart = () => {
   const { data, isLoading, isError } = useCategoryExpenseAnalytics();
 
-  if (isLoading) return <p>Loading category expense chart...</p>;
-  if (isError || !data) return <p>Failed to load chart</p>;
+  if (isLoading) return <ChartSkeleton type='pie'/>;
+  if (isError || !data || data.length === 0) return <ErrorMessageFallBackUI message='Failed to load category expense chart' />;
 
   // Transform the API shape to the expected shape
   const parsedData: CategoryExpense[] = data.map(

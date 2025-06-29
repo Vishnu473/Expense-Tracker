@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { lazy } from 'react';
 import { FixedSizeList as List } from 'react-window';
 
 import TransactionRow from './TransactionRow';
 import TransactionCard from './TransactionCard';
-import TransactionCardSkeleton from './skeletons/TransactionCardSkeleton';
-import TransactionRowSkeleton from './skeletons/TransactionRowSkeleton';
+const TransactionCardSkeleton = lazy(()=>import ('../Skeletons/Transactions/TransactionCardSkeleton'));
+const TransactionRowSkeleton = lazy(() => import ('../Skeletons/Transactions/TransactionRowSkeleton'));
 
 export interface Transaction {
   _id: string;
@@ -23,54 +23,55 @@ interface TransactionTableProps {
   cardClasses: string;
 }
 
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  }).replace(/ /g, '-');
+};
+
+const formatAmount = (amount: number, type: 'income' | 'expense' | 'saving') => {
+  const formatted = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'INR'
+  }).format(amount);
+
+  if (type === 'income') {
+    return `+${formatted}`;
+  }
+  return `-${formatted}`;
+};
+
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'Success':
+      return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+    case 'Pending':
+      return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+    case 'Failed':
+      return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+    default:
+      return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
+  }
+};
+
+const getTypeColor = (type: 'income' | 'expense' | 'saving') => {
+  switch (type) {
+    case 'income':
+      return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+    case 'saving':
+      return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+    case 'expense':
+      return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+  }
+};
+
 const TransactionTable: React.FC<TransactionTableProps> = ({
   transactions,
   isLoading,
   cardClasses
 }) => {
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    }).replace(/ /g, '-');
-  };
-
-  const formatAmount = (amount: number, type: 'income' | 'expense' | 'saving') => {
-    const formatted = new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'INR'
-    }).format(amount);
-
-    if (type === 'income') {
-      return `+${formatted}`;
-    }
-    return `-${formatted}`;
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Success':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-      case 'Pending':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
-      case 'Failed':
-        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
-      default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
-    }
-  };
-
-  const getTypeColor = (type: 'income' | 'expense' | 'saving') => {
-    switch (type) {
-      case 'income':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-      case 'saving':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
-      case 'expense':
-        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
-    }
-  };
 
   return (
     <div className={`${cardClasses} border rounded-lg overflow-hidden`}
@@ -79,13 +80,13 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
         <>
           {/* Desktop Skeletons */}
           <div className={`transition-opacity duration-500 ease-in-out hidden lg:block overflow-x-auto ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
-            <div className="grid grid-cols-6 bg-gray-50 dark:bg-gray-700 font-medium text-sm text-left px-6 py-4 border-b">
-              <span>Date</span>
-              <span>Category</span>
-              <span>Description</span>
-              <span>Amount</span>
-              <span>Type</span>
-              <span>Status</span>
+            <div className="grid grid-cols-6 bg-gray-50 dark:bg-gray-700 font-medium text-sm text-left px-6 py-4 border-b" role="row">
+              <span role="columnheader">Date</span>
+              <span role="columnheader">Category</span>
+              <span role="columnheader">Description</span>
+              <span role="columnheader">Amount</span>
+              <span role="columnheader">Type</span>
+              <span role="columnheader">Status</span>
             </div>
             <List height={400} itemCount={10} itemSize={60} width="100%">
               {({ index, style }) => <TransactionRowSkeleton style={style} key={index} />}
@@ -102,54 +103,25 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
 
       ) : transactions.length === 0 ? (
         <div className="p-8 text-center">
-          <p className="text-gray-500 mb-4">No transactions found</p>
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+          <p className="text-gray-500 mb-4" role="status" aria-live="polite">No transactions found</p>
+          <button aria-label='Add your first transaction' className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
             Add your first transaction
           </button>
         </div>
       ) : (
         <>
           {/* Desktop Table */}
-          <div className="hidden lg:block overflow-x-auto">
+          <div className="hidden lg:block overflow-x-auto" role="row">
             <div className="grid grid-cols-[1fr_1fr_3fr_1.5fr_1fr_1fr] bg-gray-50 dark:bg-gray-700 font-medium text-sm text-left px-6 py-4 border-b">
-              <span>Date</span>
-              <span>Category</span>
-              <span>Description</span>
-              <span>Amount</span>
-              <span>Type</span>
-              <span>Status</span>
+              <span role="columnheader">Date</span>
+              <span role="columnheader">Category</span>
+              <span role="columnheader">Description</span>
+              <span role="columnheader">Amount</span>
+              <span role="columnheader">Type</span>
+              <span role="columnheader">Status</span>
             </div>
-            {/* {transactions.map((transaction: Transaction) => (
-                  <tr key={transaction._id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
-                    <td className="px-6 py-4 text-sm">
-                      {formatDate(transaction.transaction_date)}
-                    </td>
-                    <td className="px-6 py-4 text-sm font-medium">
-                      {transaction.category_name}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
-                      {transaction.description}
-                    </td>
-                    <td className={`px-6 py-4 text-sm font-medium ${
-                      transaction.category_type === 'income' ? 'text-green-600' : transaction.category_type === 'saving' ? 'text-blue-500' : 'text-red-600'
-                    }`}>
-                      {formatAmount(transaction.amount, transaction.category_type)}
-                    </td>
-                    <td className="px-6 py-4 text-sm">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(transaction.category_type)}`}>
-                        {transaction.category_type === 'income' ? 'Income' : (transaction.category_type === 'saving' ? 'Saving' : 'Expense')}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(transaction.status)}`}>
-                        {transaction.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))} */}
-
             <List
-              height={Math.min(600,transactions.length*60)}
+              height={Math.min(600, transactions.length * 60)}
               itemCount={transactions.length}
               itemSize={60}
               width="100%"

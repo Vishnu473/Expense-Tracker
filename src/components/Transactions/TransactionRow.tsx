@@ -21,12 +21,13 @@ const TransactionRow: React.FC<TransactionRowProps> = React.memo(({
   return (
     <div
       style={style}
+      role="row"
       className="grid grid-cols-[1fr_1fr_3fr_1.5fr_1fr_1fr] px-6 py-4 text-sm border-b dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors"
     >
-      <span>{formatDate(transaction.transaction_date)}</span>
-      <span>{transaction.category_name}</span>
-      <span className="text-gray-600 dark:text-gray-400 truncate block max-w-full mr-10">{transaction.description}</span>
-      <span className={
+      <span role="cell">{formatDate(transaction.transaction_date)}</span>
+      <span role="cell">{transaction.category_name}</span>
+      <span role="cell" className="text-gray-600 dark:text-gray-400 truncate block max-w-full mr-10">{transaction.description}</span>
+      <span role="cell" className={
         `font-medium ${
           transaction.category_type === 'income'
             ? 'text-green-600'
@@ -37,7 +38,7 @@ const TransactionRow: React.FC<TransactionRowProps> = React.memo(({
       }>
         {formatAmount(transaction.amount, transaction.category_type)}
       </span>
-      <span>
+      <span  role="cell">
         <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(transaction.category_type)}`}>
           {transaction.category_type === 'income'
             ? 'Income'
@@ -46,7 +47,7 @@ const TransactionRow: React.FC<TransactionRowProps> = React.memo(({
               : 'Expense'}
         </span>
       </span>
-      <span>
+      <span  role="cell">
         <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(transaction.status)}`}>
           {transaction.status}
         </span>

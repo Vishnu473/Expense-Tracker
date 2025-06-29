@@ -7,6 +7,8 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { useSavingsProgressAnalytics } from '../../../hooks/useAnalytics';
+import ChartSkeleton from '../../Skeletons/Charts/ChartSkeleton';
+import ErrorMessageFallBackUI from '../../Skeletons/Charts/ErrorMessageFallBackUI';
 
 const COLORS = [
   '#8884d8',
@@ -30,8 +32,9 @@ type SavingsProgress = {
 const SavingsProgressChart = () => {
   const { data, isLoading, isError } = useSavingsProgressAnalytics();
 
-  if (isLoading) return <p>Loading savings progress chart...</p>;
-  if (isError || !data) return <p>Failed to load savings progress chart</p>;
+  if (isLoading) return (
+    <ChartSkeleton type='pie' />);
+  if (isError || !data || data.length === 0) return <ErrorMessageFallBackUI message='Failed to load savings progress chart' />;
 
   const formattedData = data.map((item: SavingsProgress) => ({
     name: item.purpose || 'Saving Goal',
@@ -54,11 +57,11 @@ const SavingsProgressChart = () => {
             innerRadius={40}
             outerRadius={80}
             labelLine={false}
-            // label={({ name, percent }) =>
-            //   `${name} (${(percent * 100).toFixed(0)}%)`
-            // }
+          // label={({ name, percent }) =>
+          //   `${name} (${(percent * 100).toFixed(0)}%)`
+          // }
           >
-            {formattedData.map((_:SavingsProgress, index:number) => (
+            {formattedData.map((_: SavingsProgress, index: number) => (
               <Cell
                 key={`cell-${index}`}
                 fill={COLORS[index % COLORS.length]}

@@ -35,7 +35,7 @@ const Register = () => {
                 getAllCategories().then(data => dispatch(setCategories(data)))
             ]);
             toast.success("Registration successful");
-            navigate("/dashboard");
+            navigate("/login");
         },
         onError: () => toast.error("Registration failed. Try again."),
     });

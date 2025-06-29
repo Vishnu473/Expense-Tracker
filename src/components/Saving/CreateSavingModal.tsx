@@ -165,7 +165,7 @@ const CreateSavingModal = ({ isCreateModal, closeModal }: { isCreateModal: boole
                                     className="h-full w-full object-cover"
                                 />
                             ) : (
-                                <span className="text-gray-300 text-sm">Click to upload image</span>
+                                <span className="text-gray-700 dark:text-gray-300 text-sm">Click to upload image</span>
                             )}
                             <input
                                 id="image-upload"

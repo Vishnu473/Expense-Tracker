@@ -17,7 +17,9 @@ const TransactionCard: React.FC<TransactionCardProps> = React.memo(({
   getTypeColor
 }) => {
   return (
-    <div className="p-4 border-b border-gray-200 dark:border-gray-700 last:border-b-0">
+    <div className="p-4 border-b border-gray-200 dark:border-gray-700 last:border-b-0"
+       role="group"
+       aria-label={`Transaction of ${formatAmount(transaction.amount, transaction.category_type)} for ${transaction.category_name}`}>
       <div className="flex justify-between items-start mb-2">
         <div className="max-w-[70%] sm:max-w-[80%]">
           <h3 className="font-medium text-xs md:text-sm">{transaction.category_name}</h3>

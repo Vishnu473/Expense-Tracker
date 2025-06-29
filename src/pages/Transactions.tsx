@@ -7,6 +7,7 @@ import Pagination from '../components/Transactions/Pagination';
 import { useTheme } from '../context/ThemeContext';
 const CreateTransactionModal = lazy(() => import('../components/Transactions/CreateTransactionModal'));
 import TransactionFilters from '../components/Transactions/TransactionFilters';
+import TransactionPageSkeleton from '../components/Skeletons/Transactions/TransactionPageSkeleton';
 
 const Transactions: React.FC = () => {
   const [isModal, setIsModal] = useState<boolean>(false);
@@ -21,7 +22,6 @@ const Transactions: React.FC = () => {
     }
   }, [theme]);
 
-  // Custom hooks
   const {
     filters,
     transactions,
@@ -45,61 +45,91 @@ const Transactions: React.FC = () => {
     );
   }
 
+  if (isLoading) {
+    return (
+      <div className={`min-h-screen ${themeClasses}`}>
+        <main className="max-w-4xl mx-auto w-full p-6">
+          <TransactionPageSkeleton cardClasses={cardClasses} inputClasses={inputClasses} />
+        </main>
+      </div>
+    );
+  }
+  console.log(transactions);
+
   return (
-    <div className={`min-h-screen transition-colors duration-200 ${themeClasses}`}>
-      {/* Main Content */}
-      <main className="max-w-4xl mx-auto w-full p-6">
-        {/* Page Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between  mb-4">
-          <h1 className="text-3xl font-bold">Transactions</h1>
-          <button className="bg-blue-600 hover:bg-blue-700 dark:bg-gray-600 dark:hover:bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors w-fit"
-            onClick={() => {
-              setIsModal(true)
-            }}>
-            <span>New Transaction</span>
-          </button>
-        </div>
+    <>
+      {transactions.length === 0 ? (
+      <div className="p-8 w-full h-screen flex flex-col justify-center items-center text-center">
+        <p
+          className="text-gray-600 dark:text-gray-300 text-lg mb-4"
+          role="status"
+          aria-live="polite"
+        >
+          No transactions found.
+        </p>
+        <button aria-label="Create new transaction" role='button'
+          className="bg-blue-600 hover:bg-blue-700 dark:bg-gray-600 dark:hover:bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors w-fit"
+          onClick={() => {
+            setIsModal(true)
+          }}>
+          <span>New Transaction</span>
+        </button>
+      </div>
+      ) : (
+      < div className={`min-h-screen transition-colors duration-200 ${themeClasses}`
+      }>
+        <main className="max-w-4xl mx-auto w-full p-6">
+          <div aria-labelledby='Transactions title' className="flex flex-col sm:flex-row sm:items-center sm:justify-between  mb-4">
+            <h1 id='Transactions title' className="text-3xl font-bold">Transactions</h1>
+            <button aria-label="Create new transaction" role='button'
+              className="bg-blue-600 hover:bg-blue-700 dark:bg-gray-600 dark:hover:bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors w-fit"
+              onClick={() => {
+                setIsModal(true)
+              }}>
+              <span>New Transaction</span>
+            </button>
+          </div>
 
-        {/* Search and Filters */}
-        <TransactionFilters
-          filters={filters}
-          showFilters={showFilters}
-          activeFiltersCount={activeFiltersCount}
-          onFilterChange={handleFilterChange}
-          onToggleFilters={() => setShowFilters(!showFilters)}
-          onClearFilters={clearFilters}
-          cardClasses={cardClasses}
-          inputClasses={inputClasses}
-        />
-
-        <QuickSortButtons
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          inputClasses={inputClasses}
-        />
-
-        <TransactionTable
-          transactions={transactions}
-          isLoading={isLoading}
-          isDarkMode={theme === 'dark'}
-          cardClasses={cardClasses}
-        />
-
-        {pagination && (
-          <Pagination
-            pagination={pagination}
-            currentPage={filters.page}
-            onPageChange={handlePageChange}
+          <TransactionFilters
+            filters={filters}
+            showFilters={showFilters}
+            activeFiltersCount={activeFiltersCount}
+            onFilterChange={handleFilterChange}
+            onToggleFilters={() => setShowFilters(!showFilters)}
+            onClearFilters={clearFilters}
+            cardClasses={cardClasses}
             inputClasses={inputClasses}
           />
-        )}
-      </main>
 
-      <Suspense fallback={null}>
+          <QuickSortButtons
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            inputClasses={inputClasses}
+          />
+
+          <TransactionTable
+            transactions={transactions}
+            isLoading={isLoading}
+            isDarkMode={theme === 'dark'}
+            cardClasses={cardClasses}
+          />
+
+          {pagination && (
+            <Pagination
+              pagination={pagination}
+              currentPage={filters.page}
+              onPageChange={handlePageChange}
+              inputClasses={inputClasses}
+              maxVisiblePages={7}
+            />
+          )}
+        </main>
+      </div >
+      )}
+      <Suspense fallback={<div aria-busy="true">Loading modal...</div>}>
         <CreateTransactionModal onClose={() => setIsModal(false)} isModal={isModal} />
       </Suspense>
-
-    </div>
+    </>
   );
 };
 

@@ -3,6 +3,8 @@ import {
 } from 'recharts';
 import { useBalanceGrowthAnalytics } from '../../../hooks/useAnalytics';
 import { format, parse } from 'date-fns';
+import ChartSkeleton from '../../Skeletons/Charts/ChartSkeleton';
+import ErrorMessageFallBackUI from '../../Skeletons/Charts/ErrorMessageFallBackUI';
 
 interface BalanceGrowth {
   month: string; // e.g., "4-2025"
@@ -17,8 +19,8 @@ interface ParsedBalanceGrowth {
 const BalanceGrowthChart = () => {
   const { data, isLoading, isError } = useBalanceGrowthAnalytics();
 
-  if (isLoading) return <p>Loading balance growth chart...</p>;
-  if (isError || !data) return <p>Failed to load balance growth chart</p>;
+  if (isLoading) return <ChartSkeleton type='line' />;
+  if (isError || !data || data.length === 0) return <ErrorMessageFallBackUI message='Failed to load balance growth chart' />;
 
   const parsedData: ParsedBalanceGrowth[] = data.map((d: BalanceGrowth) => ({
     month: format(parse(`01-${d.month}`, 'dd-M-yyyy', new Date()), 'MMM yyyy'),

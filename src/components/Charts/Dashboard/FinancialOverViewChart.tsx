@@ -1,11 +1,13 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from 'recharts';
 import { useFinancialOverviewAnalytics } from '../../../hooks/useAnalytics';
+import ChartSkeleton from '../../Skeletons/Charts/ChartSkeleton';
+import ErrorMessageFallBackUI from '../../Skeletons/Charts/ErrorMessageFallBackUI';
 
 const FinancialOverviewChart = () => {
   const { data, isLoading, isError } = useFinancialOverviewAnalytics();
 
-  if (isLoading) return <p aria-busy="true">Loading Financial Overview...</p>;
-  if (isError) return <p aria-busy="true">Failed to load financial overview.</p>;
+  if (isLoading) return <ChartSkeleton type='bar'/>;
+  if (isError || !data || data.length === 0) return <ErrorMessageFallBackUI message='Failed to load financial overview chart.'/>;
 
   return (
     <div role="img" aria-describedby="Financial overview chart" className="p-4 rounded-lg shadow flex flex-col gap-5 bg-white dark:bg-gray-900 flex-1">

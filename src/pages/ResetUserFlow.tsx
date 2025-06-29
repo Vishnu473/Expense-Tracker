@@ -2,7 +2,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import VerifyOtp from "../components/resetFlow/VerifyOtp";
 import ResetPassword from "../components/resetFlow/ResetPassword";
-import ForgotPassword from "../components/resetFlow/forgotPassword";
+import ForgotPassword from "../components/resetFlow/ForgotPassword";
 
 const ResetUserFlow = () => {
   const [step, setStep] = useState<"email" | "otp" | "reset">("email");

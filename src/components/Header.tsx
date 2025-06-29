@@ -9,6 +9,7 @@ import { logout } from "../redux/slices/authSlice";
 import { toast } from "react-toastify";
 import { clearBankAccounts } from "../redux/slices/bankSlice";
 import { logoutApi } from "../services/api/authApi";
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
 
 const navLinks = [
   { name: "Dashboard", path: "/dashboard" },
@@ -28,10 +29,12 @@ const Header = () => {
   const user = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const handleLogout = useCallback(async () => {
     try {
       await logoutApi();
+      queryClient.removeQueries();
       dispatch(clearBankAccounts());
       dispatch(logout());
       toast.info("Logged out!");
