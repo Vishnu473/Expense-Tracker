@@ -18,10 +18,13 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-white scroll-smooth">
       {/* Navbar */}
-      <header className=" top-0 z-50 w-full bg-white dark:bg-gray-800 shadow-md py-4 px-6 flex justify-between items-center relative">
+      <header className="absolute top-0 z-50 w-full bg-white dark:bg-gray-800 shadow-md py-4 px-6 flex items-center justify-between">
+        {/* App Name */}
         <h1 className="text-xl md:text-2xl font-bold text-blue-600 dark:text-cyan-400">
           ExpenseTracker
         </h1>
+
+        {/* Mobile Menu Button */}
         <div className="md:hidden">
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -30,55 +33,80 @@ const LandingPage = () => {
             {isMobileMenuOpen ? <FiX /> : <FiMenu />}
           </button>
         </div>
-        <nav className="hidden md:flex space-x-4 text-sm md:text-base">
-          <a href="#hero" className="hover:underline">Home</a>
-          <a href="#about" className="hover:underline">About</a>
-          <a href="#features" className="hover:underline">Features</a>
-          <a href="#demo" className="hover:underline">Demo</a>
+
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center space-x-4 text-sm md:text-base">
+          <a href="#hero" className="font-semibold hover:underline text-gray-500 hover:text-blue-500 dark:hover:text-gray-300">Home</a>
+          <a href="#about" className="font-semibold hover:underline text-gray-500 hover:text-blue-500 dark:hover:text-gray-300">About</a>
+          <a href="#features" className="font-semibold hover:underline text-gray-500 hover:text-blue-500 dark:hover:text-gray-300">Features</a>
+          <a href="#demo" className="font-semibold hover:underline text-gray-500 hover:text-blue-500 dark:hover:text-gray-300">Demo</a>
+
           {user ? (
-            <Link to="/dashboard" className="text-blue-600 dark:text-cyan-400 hover:underline">
+            <Link
+              to="/dashboard"
+              className="text-blue-600 dark:text-cyan-400 hover:underline"
+            >
               Dashboard
             </Link>
           ) : (
             <>
-              <Link to="/login" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
+              <Link
+                to="/login"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
+              >
                 Login
               </Link>
-              <Link to="/register" className="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-md">
+              <Link
+                to="/register"
+                className="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-md"
+              >
                 Register
               </Link>
             </>
           )}
         </nav>
+
+        {/* Mobile Dropdown */}
         {isMobileMenuOpen && (
-          <div className="absolute border-t border-blue-500 dark:border-cyan-500 top-full left-0 right-0 z-40 md:hidden bg-white dark:bg-gray-800 px-6 py-4 space-y-4 shadow-md">
-            <a href="#hero" className="block hover:underline" onClick={() => setIsMobileMenuOpen(false)}>Home</a>
-            <a href="#about" className="block hover:underline" onClick={() => setIsMobileMenuOpen(false)}>About</a>
-            <a href="#features" className="block hover:underline" onClick={() => setIsMobileMenuOpen(false)}>Features</a>
-            <a href="#demo" className="block hover:underline" onClick={() => setIsMobileMenuOpen(false)}>Demo</a>
+          <div className="absolute border-t border-blue-500 dark:border-cyan-500 top-full left-0 right-0 z-40 md:hidden bg-white dark:bg-gray-800 space-y-4 px-6 py-4 shadow-md">
+            <a href="#hero" className="block hover:underline text-gray-500 hover:text-blue-500 dark:hover:text-gray-300" onClick={() => setIsMobileMenuOpen(false)}>Home</a>
+            <a href="#about" className="block hover:underline text-gray-500 hover:text-blue-500 dark:hover:text-gray-300" onClick={() => setIsMobileMenuOpen(false)}>About</a>
+            <a href="#features" className="block hover:underline text-gray-500 hover:text-blue-500 dark:hover:text-gray-300" onClick={() => setIsMobileMenuOpen(false)}>Features</a>
+            <a href="#demo" className="block hover:underline text-gray-500 hover:text-blue-500 dark:hover:text-gray-300" onClick={() => setIsMobileMenuOpen(false)}>Demo</a>
+
             {user ? (
-              <Link to="/dashboard" className="block text-blue-600 dark:text-cyan-400 hover:underline" onClick={() => setIsMobileMenuOpen(false)}>
+              <Link
+                to="/dashboard"
+                className="block text-blue-600 dark:text-cyan-400 hover:underline"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
                 Dashboard
               </Link>
             ) : (
-              <>
-                <Link to="/login" className="block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md" onClick={() => setIsMobileMenuOpen(false)}>
+              <div className="inline-flex flex-col gap-2">
+                <Link
+                  to="/login"
+                  className="inline-block dark:text-gray-600 dark:hover:text-gray-300 hover:text-blue-700 text-blue-500 font-medium"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
                   Login
                 </Link>
-                <Link to="/register" className="block bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-md" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link
+                  to="/register"
+                  className="inline-block dark:text-gray-600 dark:hover:text-gray-300 hover:text-blue-700 text-blue-500 font-medium"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
                   Register
                 </Link>
-              </>
+              </div>
             )}
           </div>
         )}
       </header>
 
-
-
       {/* Hero Section */}
       <section id="hero" className="flex flex-col items-center text-center justify-center px-6 py-20">
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 max-w-2xl">
+        <h2 className="text-3xl mt-5 md:mt-20 sm:text-4xl md:text-5xl font-extrabold mb-4 max-w-2xl">
           Take Control of Your Finances
         </h2>
         <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mb-6">

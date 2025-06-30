@@ -38,6 +38,7 @@ const Login = () => {
                 getAllCategories().then(data => dispatch(setCategories(data)))
             ]);
             toast.success("Logged in!");
+            sessionStorage.removeItem("redirectedOnce");
             navigate("/dashboard");
         },
         onError: () => toast.error("Invalid credentials"),

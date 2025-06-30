@@ -1,25 +1,24 @@
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { clearQueryClient, handleLogoutUser } from '../utils/handleLogOutUser';
+import { toast } from 'react-toastify';
+
 let isRefreshing = false;
-let isRedirecting = false; // NEW
 
 export const redirectToLogin = async () => {
-  const navigate = useNavigate();
-  if (isRedirecting) return;
-  isRedirecting = true;
+  if (sessionStorage.getItem("redirectedOnce")) return;
 
-  try {
-    await axios.get(`${import.meta.env.VITE_API_BASE_URL}/user/logout`, {
-      withCredentials: true,
-    });
-  } catch (err) {
-    console.error("❌ Failed to call logout API", err);
-  }
+  sessionStorage.setItem("redirectedOnce", "true");
+  
+  toast.info("Session expired. Logging out...");
+  await handleLogoutUser();
+  clearQueryClient();
 
-  localStorage.clear();
-
-  navigate("/login");
+  // Let toast show for 1 second, then replace
+  setTimeout(() => {
+    window.location.replace("/login");
+  }, 1000);
 };
+
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -27,26 +26,32 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.response.use(
-  (res) => res,
-  async (error) => {
+  res => res,
+  async error => {
     const originalRequest = error.config;
-    
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      
-      originalRequest._retry = true;
 
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url.includes('/user/auth/refresh')
+    ) {
+      originalRequest._retry = true;
+      
+      
       if (isRefreshing) return Promise.reject(error);
       isRefreshing = true;
 
       try {
-        await axiosInstance.get('/user/auth/refresh', { withCredentials: true });
-        isRefreshing = false;
-        return axios(originalRequest);
+        await axiosInstance.get('/user/auth/refresh');
+        return axiosInstance(originalRequest);
       } catch (refreshErr) {
-        isRefreshing = false;
-        console.error("Refresh failed, redirecting...");
-        await redirectToLogin();
+        console.log("Refresh Error.....");
+        // if(!sessionStorage.getItem("redirectedOnce")){
+          await redirectToLogin();
+        // }
         return Promise.reject(refreshErr);
+      } finally {
+        isRefreshing = false;
       }
     }
 
