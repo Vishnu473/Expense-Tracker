@@ -15,55 +15,33 @@ const PaymentAppAnalyticsChart = lazy(() => import("../components/Charts/Reports
 export default function Reports() {
   const chartRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  // const handleExportChart = async (index: number, type: "png" | "pdf") => {
-  //   const target = chartRefs.current[index];
-  //   if (!target) return;
-
-  //   const canvas = await html2canvas(target);
-  //   if (type === "png") {
-  //     const link = document.createElement("a");
-  //     link.download = `report-${index + 1}.png`;
-  //     link.href = canvas.toDataURL();
-  //     link.click();
-  //   } else {
-  //     const pdf = new jsPDF("p", "mm", "a4");
-  //     const imgData = canvas.toDataURL("image/png");
-  //     const width = 180;
-  //     const height = (canvas.height * width) / canvas.width;
-  //     pdf.addImage(imgData, "PNG", 15, 15, width, height);
-  //     pdf.save(`report-${index + 1}.pdf`);
-  //   }
-  // };
-
-  // const handleExportAllPDF = async () => {
-  //   const pdf = new jsPDF("p", "mm", "a4");
-  //   for (let i = 0; i < chartRefs.current.length; i++) {
-  //     const chart = chartRefs.current[i];
-  //     if (!chart) continue;
-
-  //     const canvas = await html2canvas(chart);
-  //     const imgData = canvas.toDataURL("image/png");
-  //     const width = 180;
-  //     const height = (canvas.height * width) / canvas.width;
-
-  //     if (i > 0) pdf.addPage();
-  //     pdf.addImage(imgData, "PNG", 15, 15, width, height);
-  //   }
-  //   pdf.save("all-reports.pdf");
-  // };
-
   const balance = useBalanceGrowthAnalytics();
   const category = useCategoryExpenseAnalytics();
   const savings = useSavingsProgressAnalytics();
   const payment = usePaymentAppAnalytics();
   const source = useSourceSpendingAnalytics();
 
+  const isLoading =
+    balance.isLoading ||
+    category.isLoading ||
+    savings.isLoading ||
+    payment.isLoading ||
+    source.isLoading;
+
+  const anyError =
+    balance.isError ||
+    category.isError ||
+    savings.isError ||
+    payment.isError ||
+    source.isError;
+
   const allEmpty =
-    (!balance?.data || balance.data.length === 0) &&
-    (!category?.data || category.data.length === 0) &&
-    (!savings?.data || savings.data.length === 0) &&
-    (!payment?.data || payment.data.length === 0) &&
-    (!source?.data || source.data.length === 0);
+    !balance.data?.length &&
+    !category.data?.length &&
+    !savings.data?.length &&
+    !payment.data?.length &&
+    !source.data?.length;
+
 
   const charts = [
     <Suspense fallback={<ChartSkeleton />}><BalanceGrowthChart key="balance" /></Suspense>,
@@ -82,8 +60,17 @@ export default function Reports() {
             📊 Reports Dashboard
           </h1>
         </div>
-
-        {allEmpty ? (
+        {isLoading ? (
+          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2">
+            {Array.from({ length: 5 }).map((_, index) => (
+              <ChartSkeleton key={index} />
+            ))}
+          </div>
+        ) : anyError ? (
+          <div className="min-h-[40vh] flex items-center justify-center text-center text-red-500 dark:text-red-400">
+            Server error while fetching analytics. Please try again later.
+          </div>
+        ) : allEmpty ? (
           <div className="min-h-[40vh] flex items-center justify-center text-center text-gray-500 dark:text-gray-300">
             Data is insufficient to render charts. Add some transactions to get started.
           </div>
@@ -105,6 +92,7 @@ export default function Reports() {
             ))}
           </div>
         )}
+
       </div>
     </div>
   );

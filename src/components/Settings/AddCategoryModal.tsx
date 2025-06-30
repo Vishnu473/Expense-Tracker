@@ -88,7 +88,6 @@ export const AddCategoryModal: React.FC<AddCategoryModalProps> = React.memo(({
         >
           <option value="income">Income</option>
           <option value="expense">Expense</option>
-          <option value="saving">Saving</option>
         </select>
         
         <div className="mt-6 flex justify-end space-x-3">

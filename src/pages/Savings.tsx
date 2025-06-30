@@ -22,7 +22,12 @@ const Savings = () => {
   const openEditModal = useCallback((saving: Saving) => setSelectedSaving(saving), []);
   const closeEditModal = useCallback(() => setSelectedSaving(null), []);
 
-  if (error) return <div className="text-red-400">{error.message}</div>
+  if (error) return <div className={`min-h-screen dark:bg-gray-800 bg-gray-100 flex items-center justify-center`}>
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-2 text-red-500">Error Loading Savings</h2>
+          <p className="text-gray-500">Please try again later</p>
+        </div>
+      </div>
   if (isLoading) {
     return (
       <div className="p-6 bg-gray-100 dark:bg-gray-800">
@@ -55,7 +60,7 @@ const Savings = () => {
             </button>
           </div>
         ) : (
-          <div className="p-6 bg-gray-100 dark:bg-gray-800">
+          <div className="p-6 h-screen bg-gray-100 dark:bg-gray-800">
             <div className='max-w-4xl mx-auto'>
               <div aria-labelledby='savings goal title' className='flex flex-row justify-between items-center mb-4'>
                 <h2 id='savings goal title' className="text-3xl font-bold dark:text-white ">Savings Goals</h2>

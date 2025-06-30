@@ -38,7 +38,7 @@ const Transactions: React.FC = () => {
     return (
       <div className={`min-h-screen ${themeClasses} bg-gray-100 flex items-center justify-center`}>
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-2">Error Loading Transactions</h2>
+          <h2 className="text-2xl font-bold mb-2 text-red-500">Error Loading Transactions</h2>
           <p className="text-gray-500">Please try again later</p>
         </div>
       </div>
@@ -54,7 +54,6 @@ const Transactions: React.FC = () => {
       </div>
     );
   }
-  console.log(transactions);
 
   return (
     <>

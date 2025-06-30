@@ -29,21 +29,25 @@ const SourceSpendingChart = () => {
   }));
 
   return (
-    <div className="w-full h-72">
-      <h2 className="text-lg font-semibold text-center dark:text-white mb-2">
-        Source-wise Spending
-      </h2>
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={formattedData}>
-          <XAxis dataKey="source" />
-          <YAxis />
+    data.length === 0 || !data ? (
+      <div className="min-h-[40vh] flex items-center justify-center text-center text-gray-500 dark:text-gray-300">
+        Data is insufficient to render charts. Add some transactions to get started.
+      </div>) :
+      <div className="w-full h-72">
+        <h2 className="text-lg font-semibold text-center dark:text-white mb-2">
+          Source-wise Spending
+        </h2>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={formattedData}>
+            <XAxis dataKey="source" />
+            <YAxis />
 
-          <Tooltip formatter={(val: number) => `₹${val.toLocaleString()}`} />
-          <Legend />
-          <Bar dataKey="total" fill="#8884d8" name="Expense (₹)" />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
+            <Tooltip formatter={(val: number) => `₹${val.toLocaleString()}`} />
+            <Legend />
+            <Bar dataKey="total" fill="#8884d8" name="Expense (₹)" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
   );
 };
 

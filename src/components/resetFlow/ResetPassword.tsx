@@ -24,7 +24,7 @@ const ResetPassword = ({ email }: ResetPasswordProps) => {
 
   const { mutate, isPending } = useMutation({
     mutationFn: (data: ResetPasswordSchema) =>
-      resetPassword(email, data?.password),
+      resetPassword(email, data.password),
     onSuccess: () => {
       toast.success("Password reset successfully!");
       navigate("/login");

@@ -26,8 +26,8 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
   });
 
   const { mutate: updateGoal, isPending } = useMutation({
-    mutationFn: async (data: { purpose: string; pic: string, addAmount: number, transaction_date: string }) => {
-      const updated = { ...saving, purpose: data.purpose, pic: data.pic, current_amount: saving.current_amount + data.addAmount, transaction_date: data.transaction_date };
+    mutationFn: async (data: { pic: string, addAmount: number, transaction_date: string }) => {
+      const updated = { ...saving,  pic: data.pic, current_amount: saving.current_amount + data.addAmount, transaction_date: data.transaction_date };
       const res = await axiosInstance.put(`/saving/${saving._id}`, updated);
       return res.data;
     },
@@ -49,8 +49,6 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
       const formData = new FormData();
       formData.append("file", file); // Use 'image' as expected by backend
 
-      console.log([...formData]);
-
       await callImageUploadApi(formData);
     }
   };
@@ -61,24 +59,21 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
         withCredentials: true,
         headers: { "Content-Type": "multipart/form-data" },
       });
-      console.log(response?.data);
 
       if (response.status === 200) {
-        console.log("Image uploaded successfully to Cloud.....");
         setNewImageUrl(response?.data?.url ?? 'https://dummyimage.com/600x400/000/fff&text=Uploaded+Image');
         setImageUploaded(true);
         return newImageUrl;
       }
     } catch (error) {
       setImageUploaded(false);
-      console.log("Failed to update the image");
       return saving?.pic;
     }
   };
 
   const onSubmit = async (data: { purpose: string; addAmount: number; transaction_date: string }) => {
     const imageUrl = imageUploaded ? newImageUrl : saving.pic ?? '';
-    updateGoal({ purpose: data.purpose, pic: imageUrl, addAmount: Number(data.addAmount), transaction_date: data.transaction_date });
+    updateGoal({ pic: imageUrl, addAmount: Number(data.addAmount), transaction_date: data.transaction_date });
     handleModalClose();
   };
 
@@ -144,7 +139,7 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
 
             </div>
           </div>
-          <div>
+          {/* <div>
             <label htmlFor='purpose' className="block text-white mb-1">Purpose:</label>
             <input id='purpose' aria-invalid={!!errors.purpose} aria-describedby={errors.purpose ? "purpose-error" : undefined}
               type="text"
@@ -156,7 +151,7 @@ const SavingModal = ({ saving, onClose }: SavingModalProps) => {
               <p id='purpose-error' className="text-red-400 text-sm">{errors.purpose.message}
               </p>
             )}
-          </div>
+          </div> */}
           <div>
             <label htmlFor='addAmount' className="block text-white mb-1">Enter amount:</label>
             <input id='addAmount'

@@ -9,5 +9,5 @@ export const verifyOtp = (email: string, otp: string) =>
 export const resendOtp = (email: string) =>
   axiosInstance.post("/secure/verify-otp", { email });
 
-export const resetPassword = (email: string, password: string) =>
-  axiosInstance.post("/secure/reset-password", { email, password });
+export const resetPassword = (email: string, newPassword: string) =>
+  axiosInstance.post("/secure/reset-password", { email, newPassword });

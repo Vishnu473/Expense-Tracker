@@ -66,8 +66,6 @@ const CreateSavingModal = ({ isCreateModal, closeModal }: { isCreateModal: boole
         const formData = new FormData();
         formData.append("file", file); // Use 'image' as expected by backend
 
-        console.log([...formData]);
-
         try {
             const url = await uploadImage(formData);
             setNewImageUrl(url);
@@ -115,7 +113,6 @@ const CreateSavingModal = ({ isCreateModal, closeModal }: { isCreateModal: boole
     if (!isCreateModal) return null;
 
     const onSubmit = async (data: CreateSavingSchema) => {
-        console.log(data);
         const today = new Date();
         const newSaving: Saving = {
             ...data,
@@ -125,7 +122,6 @@ const CreateSavingModal = ({ isCreateModal, closeModal }: { isCreateModal: boole
             transaction_date: today.toISOString().split('T')[0],
             current_amount: 0
         };
-        console.log(newSaving);
 
         try {
             await savingMutation.mutateAsync(newSaving);

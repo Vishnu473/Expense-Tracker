@@ -42,40 +42,44 @@ const SavingsProgressChart = () => {
   }));
 
   return (
-    <div className="w-full h-72">
-      <h2 className="text-lg font-semibold text-center dark:text-white mb-2">
-        Savings Progress
-      </h2>
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
-          <Pie
-            data={formattedData}
-            dataKey="value"
-            nameKey="name"
-            cx="50%"
-            cy="50%"
-            innerRadius={40}
-            outerRadius={80}
-            labelLine={false}
-          // label={({ name, percent }) =>
-          //   `${name} (${(percent * 100).toFixed(0)}%)`
-          // }
-          >
-            {formattedData.map((_: SavingsProgress, index: number) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={COLORS[index % COLORS.length]}
-              />
-            ))}
-          </Pie>
-          <Tooltip
-            formatter={(value: number) => `${value.toFixed(1)}%`}
-            cursor={{ fill: 'rgba(0,0,0,0.05)' }}
-          />
-          <Legend layout="horizontal" verticalAlign="bottom" align="center" />
-        </PieChart>
-      </ResponsiveContainer>
-    </div>
+    data.length === 0 || !data ? (
+      <div className="min-h-[40vh] flex items-center justify-center text-center text-gray-500 dark:text-gray-300">
+        Data is insufficient to render charts. Add some transactions to get started.
+      </div>) :
+      <div className="w-full h-72">
+        <h2 className="text-lg font-semibold text-center dark:text-white mb-2">
+          Savings Progress
+        </h2>
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={formattedData}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              innerRadius={40}
+              outerRadius={80}
+              labelLine={false}
+            // label={({ name, percent }) =>
+            //   `${name} (${(percent * 100).toFixed(0)}%)`
+            // }
+            >
+              {formattedData.map((_: SavingsProgress, index: number) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
+              ))}
+            </Pie>
+            <Tooltip
+              formatter={(value: number) => `${value.toFixed(1)}%`}
+              cursor={{ fill: 'rgba(0,0,0,0.05)' }}
+            />
+            <Legend layout="horizontal" verticalAlign="bottom" align="center" />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
   );
 };
 

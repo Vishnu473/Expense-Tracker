@@ -45,7 +45,10 @@ const VerifyOtp = ({ email, onSuccess }: VerifyOtpProps) => {
     }
   }, [timer]);
 
-  const onSubmit = (data: VerifyOtpSchema) => mutate(data);
+
+  const onSubmit = (data: VerifyOtpSchema) =>{
+    mutate(data);
+  } 
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-gray-800 p-6 rounded shadow-md w-full max-w-sm space-y-4">
@@ -56,6 +59,8 @@ const VerifyOtp = ({ email, onSuccess }: VerifyOtpProps) => {
         <input
           {...register("otp")}
           maxLength={6}
+          required
+          pattern="\d{6}"
           className="w-full p-2 rounded text-black dark:text-white dark:bg-gray-600 outline-none border border-gray-300 dark:border-gray-500 hover:border-blue-500 dark:hover:border-cyan-300"
         />
         {errors.otp && <p className="text-red-500 text-sm">{errors.otp.message}</p>}
