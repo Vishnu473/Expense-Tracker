@@ -1,4 +1,4 @@
-import { BrowserRouter, useLocation } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { lazy, Suspense, useEffect, useState } from 'react';
@@ -25,7 +25,7 @@ function App() {
         setSessionChecked(true);
         return;
       }
-      
+
       try {
 
         const res = await axiosInstance.get('/user/me', { withCredentials: true });
