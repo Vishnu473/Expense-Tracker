@@ -1,54 +1,108 @@
-# React + TypeScript + Vite
+# Expense Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> *Track expenses, manage savings, and stay financially aware*
 
-Currently, two official plugins are available:
+**Expense Tracker** is a full-featured financial web app that allows users to track their income, expenses, savings goals, and more. Built with React + TypeScript and powered by a secure, scalable backend, this frontend is optimized for modularity, performance, and accessibility.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## 🚀 Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+* ✅ **User Authentication** (Login, Register, Session Persistence with Refresh Tokens)
+* ✅ **Transaction Management** (Create, Filter, Sort, Paginate)
+* ✅ **Savings Goals Tracking** with visual progress indicators
+* ✅ **Category & Bank Account Management** with modals
+* ✅ **Forgot Password via Email OTP** (Gmail for now, Resend-ready)
+* ✅ **Dark/Light Mode** toggle with context
+* ✅ **Protected Routes** and role-based access control
+* ✅ **Responsive & Accessible UI**
+* ✅ **Branded Fullpage Loader & Skeleton States**
+* ✅ **SEO + Performance Optimized** (Lighthouse score 90+)
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+---
+
+## 📍 Tech Stack
+
+| Category      | Technology                            |
+|---------------|----------------------------------------|
+| Framework     | React + Vite + TypeScript             |
+| State         | Redux Toolkit, React Query            |
+| Styling       | Tailwind CSS, Framer Motion           |
+| Forms & Validation | React Hook Form + Zod           |
+| Routing       | React Router DOM                      |
+| HTTP          | Axios with interceptors               |
+| Image Upload  | Cloudinary                            |
+| Email Service | Gmail (Resend configured for future)  |
+| Deployment    | Vercel                                |
+
+
+---
+
+## 🔧 Setup & Development
+
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/your-username/expense-tracker.git
+cd expense-tracker/frontend
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. Install dependencies
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+npm install
+# or
+yarn
 ```
+
+### 3. Create Environment File
+
+Create a `.env` file in the root folder and set:
+
+```env
+VITE_API_BASE_URL=http://localhost:3000/api/v1
+```
+
+> Refer to `.env.sample` for the correct format.
+
+### 4. Run the app
+
+```bash
+npm run dev
+# or
+yarn dev
+```
+
+---
+
+## 🗂️ Project Structure
+
+```
+src/
+ ┣ assets/                 
+ ┣ components/              
+ ┣ context/                 
+ ┣ hooks/                   
+ ┣ interfaces/              
+ ┣ lib/                     
+ ┣ pages/                   
+ ┣ redux/                  
+ ┣ routes/                 
+ ┣ schemas/                 
+ ┣ services/               
+ ┣ utils/                   
+ ┣ App.tsx / main.tsx      
+```
+
+---
+
+## 🙌 Contribution
+
+This is a personal project built from the ground up.
+Feel free to raise issues, suggest improvements, or fork it for your own financial planner app.
+
+---
+
+## 📜 License
+
+[MIT LICENSE](./LICENSE) — Open to use, modify, and build upon.
