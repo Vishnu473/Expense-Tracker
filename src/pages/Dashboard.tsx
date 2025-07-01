@@ -20,7 +20,7 @@ const Dashboard = () => {
 
   if (wallet.isLoading) {
     return (
-      <div className=" dark:bg-gray-800 min-h-screen p-6 max-w-4xl mx-auto">
+      <div className="h-screen dark:bg-gray-800 min-h-screen p-6 max-w-4xl mx-auto">
         <div className="animate-pulse grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[1, 2, 3,4].map((_, idx) => (
             <div

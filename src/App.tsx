@@ -10,6 +10,7 @@ import { setCredentials } from './redux/slices/authSlice';
 import { getAllCategories } from './services/api/categoryApi';
 import { setCategories } from './redux/slices/categorySlice';
 import type { RootState } from './redux/store';
+import FullPageLoader from './components/Skeletons/FullpageLoader';
 
 const AppRoutes = lazy(() => import('./routes/AppRoutes'));
 
@@ -54,18 +55,14 @@ function App() {
   }, []);
 
   if (!sessionChecked) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-lg">
-        <span aria-busy="true">🔐 Validating session, please wait...</span>
-      </div>
-    );
+    return <FullPageLoader />;
   }
 
 
   return (
     <>
       <BrowserRouter>
-        <Suspense fallback={<div>⏳ Loading routes...</div>}>
+        <Suspense fallback={<FullPageLoader />}>
           <AppRoutes />
         </Suspense>
 
